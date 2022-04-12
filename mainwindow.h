@@ -3,6 +3,12 @@
 
 #include <QMainWindow>
 #include "Box2D/Box2D.h"
+#include "qlabel.h"
+#include <vector>
+#include <QPainter>
+
+using std::vector;
+using std::map;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,6 +22,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    vector<b2Body*> createRope(int length);
+    vector<b2Body*> ropeBodies;
+
+    map<b2Body*, QLabel*> ropeBodyToLabel;
 signals:
     void newPos(int);
 public slots:
