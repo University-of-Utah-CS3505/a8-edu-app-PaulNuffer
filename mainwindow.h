@@ -36,5 +36,11 @@ private:
     b2World world;
     b2Body* body;
     Ui::MainWindow *ui;
+
+    int convertBox2dX(float input);
+    int convertBox2dY(float input);
+
+    float ropeWidth;
+    float ropeHeight;
 };
 #endif // MAINWINDOW_H

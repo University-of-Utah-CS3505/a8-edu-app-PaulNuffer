@@ -14,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent)
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0.0f, -10.0f);
 
+    ropeWidth = 0.08, ropeHeight = 0.1;
+
+
     // Call the body factory which allocates memory for the ground body
     // from a pool and creates the ground box shape (also from a pool).
     // The body is also added to the world.
@@ -75,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QLabel* pegLabel = new QLabel(ui->centralwidget);
     pegLabel->setText("O");
-    pegLabel->setGeometry(pegBody->GetPosition().x*100, pegBody->GetPosition().y*-100 + 500, pegLabel->width(), pegLabel->height());
+    pegLabel->setGeometry(convertBox2dX(pegBody->GetPosition().x), convertBox2dY(pegBody->GetPosition().y), pegLabel->width(), pegLabel->height());
 
 
     ropeBodies = createRope(80);
@@ -87,8 +90,12 @@ MainWindow::MainWindow(QWidget *parent)
         //ropeBody->ApplyForceToCenter(force, true);
 
         QLabel* ropeLabel =  new QLabel(ui->centralwidget);
-        ropeLabel->setText("#");
-        ropeLabel->setGeometry(ropeBody->GetPosition().x*100, ropeBody->GetPosition().y*-100 + 500, ropeLabel->width(), ropeLabel->height());
+        ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), ropeLabel->width(), ropeLabel->height());
+        QImage imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
+        imgFill.fill(QColor(255,0,0,255));
+        QImage imgFillTrns = imgFill.transformed(QTransform().rotate(45));
+//        pntr.drawRect(0, 0, imgFill.width(), imgFill.height());
+        ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
         ropeBodyToLabel.emplace(ropeBody, ropeLabel);
     }
 
@@ -118,9 +125,13 @@ void MainWindow::updateWorld() {
         //QLabel* ropeLabel =  new QLabel("#");
         //ui->verticalLayout->addWidget(ropeLabel);
         QLabel* ropeLabel = ropeBodyToLabel.at(ropeBody);
-        ropeLabel->setGeometry(ropeBody->GetPosition().x*100, ropeBody->GetPosition().y*-100 + 500, ropeLabel->width(), ropeLabel->height());
-
-        std::cout << i++ << ":" << ropeBody->GetPosition().x << " : " << ropeBody->GetPosition().y << std::endl;
+        ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), ropeLabel->width(), ropeLabel->height());
+        QImage* imgFill = new QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
+        imgFill->fill(QColor(255,0,0,255));
+        QImage imgFillTrns = imgFill->transformed(QTransform().rotate(45));
+//        pntr.drawRect(0, 0, imgFill.width(), imgFill.height());
+        ropeLabel->setPixmap(QPixmap::fromImage(*imgFill));
+        //std::cout << i++ << ":" << ropeBody->GetAngle() << " : " << pntr.transform().isRotating() << std::endl;
     }
 
 //    for (int i = 0; i < ropeBodies.size()-1; i++) {
@@ -189,4 +200,12 @@ vector<b2Body*> MainWindow::createRope(int length) {
     }
 
     return bodies;
+}
+
+int MainWindow::convertBox2dX(float input){
+    return (int)(input * 100);
+}
+
+int MainWindow::convertBox2dY(float input){
+    return (int)(input*-100)+500;
 }
