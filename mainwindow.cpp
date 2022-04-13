@@ -34,13 +34,16 @@ MainWindow::MainWindow(QWidget *parent)
     // Define the dynamic body. We set its position and call the body factory.
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(0.0f, 4.0f);
+    bodyDef.position.Set(5.0f, 4.0f);
 
-    body = world.CreateBody(&bodyDef);
+    climber = world.CreateBody(&bodyDef);
+
+    bodyDef.position.Set(3.0f, 0.0f);
+    belayer = world.CreateBody(&bodyDef);
 
     // Define another box shape for our dynamic body.
     b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(1.0f, 1.0f);
+    dynamicBox.SetAsBox(0.25f, 0.25f);
 
     // Define the dynamic body fixture.
     b2FixtureDef fixtureDef;
@@ -53,7 +56,16 @@ MainWindow::MainWindow(QWidget *parent)
     fixtureDef.friction = 0.3f;
     fixtureDef.restitution = 0.9;
     // Add the shape to the body.
-    body->CreateFixture(&fixtureDef);
+    climber->CreateFixture(&fixtureDef);
+    belayer->CreateFixture(&fixtureDef);
+    int boltx = 4;
+    int bolty = 3;
+
+    createPulley(boltx, bolty, 2, climber, belayer);
+
+    QLabel* boltLabel = new QLabel(ui->centralwidget);
+    boltLabel->setText("O");
+    boltLabel->setGeometry(convertBox2dX(boltx) - boltLabel->width()/2, convertBox2dY(bolty) - boltLabel->height()/2, boltLabel->width(), boltLabel->height());
 
 
     //WALL PEG
@@ -99,8 +111,8 @@ MainWindow::MainWindow(QWidget *parent)
         ropeBodyToLabel.emplace(ropeBody, ropeLabel);
     }
 
-    connect(this, &MainWindow::newPos,
-            this, &MainWindow::setClimberY);
+//    connect(this, &MainWindow::newPos,
+//            this, &MainWindow::setClimberY);
 
     QTimer::singleShot(30, this, &MainWindow::updateWorld);
 
@@ -116,9 +128,9 @@ void MainWindow::updateWorld() {
     world.Step(1.0/60.0, 6, 2);
 
     // Now print the position and angle of the body.
-    b2Vec2 position = body->GetPosition();
+    //b2Vec2 position = climber->GetPosition();
 
-    emit newPos(position.y);
+    //emit newPos(position.y);
 
     int i = 0;
     for (b2Body* ropeBody : ropeBodies) {
@@ -144,13 +156,15 @@ void MainWindow::updateWorld() {
 //        painter.setPen(Qt::blue);
 //        painter.drawLine(pos1.x, pos1.y, pos2.x, pos2.y);
 //    }
-
+    ui->climber->setGeometry(convertBox2dX(climber->GetPosition().x) - ui->climber->width()/2, convertBox2dY(climber->GetPosition().y) - ui->climber->height()/2, ui->climber->width(), ui->climber->height());
+    ui->belayer->setGeometry(belayer->GetPosition().x*100, belayer->GetPosition().y*-100 + 500, ui->belayer->width(), ui->belayer->height());
     QTimer::singleShot(30, this, &MainWindow::updateWorld);
 }
 
-void MainWindow::setClimberY(int y) {
-    ui->climber->setGeometry(body->GetPosition().x*100, y*-100 + 500, ui->climber->width(), ui->climber->height());
-}
+//void MainWindow::setClimberY(int y) {
+//    ui->climber->setGeometry(climber->GetPosition().x*100, y*-100 + 500, ui->climber->width(), ui->climber->height());
+
+//}
 
 vector<b2Body*> MainWindow::createRope(int length) {
     vector<b2Body*> bodies;
@@ -200,6 +214,23 @@ vector<b2Body*> MainWindow::createRope(int length) {
     }
 
     return bodies;
+}
+
+void MainWindow::createPulley(int x, int y, int length, b2Body* A, b2Body* B) {
+    b2PulleyJointDef pulley = b2PulleyJointDef();
+    A->SetLinearDamping(1.0f);
+    B->SetLinearDamping(1.0f);
+    pulley.bodyA = A;
+    pulley.bodyB = B;
+    pulley.collideConnected = true;
+    pulley.localAnchorA.Set(0, 0);
+    pulley.localAnchorB.Set(0, 0);
+    pulley.lengthA = length/2;
+    pulley.lengthB = length/2;
+    pulley.groundAnchorA.Set(x, y);
+    pulley.groundAnchorB.Set(x, y);
+
+    world.CreateJoint(&pulley);
 }
 
 int MainWindow::convertBox2dX(float input){

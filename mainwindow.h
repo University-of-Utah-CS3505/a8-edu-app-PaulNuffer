@@ -22,6 +22,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    b2Body* climber;
+    b2Body* belayer;
+
+    void createPulley(int x, int y, int length, b2Body* A, b2Body* B);
     vector<b2Body*> createRope(int length);
     vector<b2Body*> ropeBodies;
 
@@ -30,11 +34,10 @@ signals:
     void newPos(int);
 public slots:
     void updateWorld();
-    void setClimberY(int);
+   // void setClimberY(int);
 
 private:
     b2World world;
-    b2Body* body;
     Ui::MainWindow *ui;
 
     int convertBox2dX(float input);
