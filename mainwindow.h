@@ -35,7 +35,7 @@ public:
     vector<b2Body*> connectRopeTo(float segmentDensity, b2Body* A, b2Body* B);
     vector<b2Body*> createRope(int numSegments, b2Vec2 vecA, b2Vec2 vecB);
     void drawRope(vector<b2Body*> rope,  map<b2Body*, QLabel*> map);
-    void updateRopes(b2Body* bolt)
+    void updateRopes(b2Body* bolt);
 
 signals:
     void newPos(int);
