@@ -113,8 +113,7 @@ HEADERS += \
 FORMS += \
     mainwindow.ui
 
-TRANSLATIONS += \
-    A8-whip-inator_en_US.ts
+
 CONFIG += lrelease
 CONFIG += embed_translations
 
