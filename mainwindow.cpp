@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0.0f, -10.0f);
 
-    ropeWidth = 0.08, ropeHeight = 0.1;
+    ropeWidth = 0.05, ropeHeight = 0.05;
 
 
     // Call the body factory which allocates memory for the ground body
@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     int boltx = 4;
     int bolty = 3;
 
-    createPulley(boltx, bolty, 2, climber, belayer);
+    createPulley(boltx, bolty, 4, climber, belayer);
 
     QLabel* boltLabel = new QLabel(ui->centralwidget);
     boltLabel->setText("O");
@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //WALL PEG
     b2BodyDef pegBodyDef;
-    pegBodyDef.position.Set(1.0f, 4.0f);
+    pegBodyDef.position.Set(boltx, bolty);
 
     // Call the body factory which allocates memory for the ground body
     // from a pool and creates the ground box shape (also from a pool).
@@ -92,30 +92,41 @@ MainWindow::MainWindow(QWidget *parent)
     pegLabel->setText("O");
     pegLabel->setGeometry(convertBox2dX(pegBody->GetPosition().x), convertBox2dY(pegBody->GetPosition().y), pegLabel->width(), pegLabel->height());
 
+    climberRope = connectRopeTo(2, pegBody, climber);
+    belayerRope = connectRopeTo(2, pegBody, belayer);
 
-    ropeBodies = createRope(80);
-    for (b2Body* ropeBody : ropeBodies) {
-        //QLabel* ropeLabel =  new QLabel("#");
-        //ui->verticalLayout->addWidget(ropeLabel);
 
-        //b2Vec2 force(5.0f, 5.0f);
-        //ropeBody->ApplyForceToCenter(force, true);
-
+    for (b2Body* ropeBody : climberRope) {
+        // Add a new label representing the rope segments body
         QLabel* ropeLabel =  new QLabel(ui->centralwidget);
-        ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), ropeLabel->width(), ropeLabel->height());
+        ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), convertBox2dX(ropeWidth), convertBox2dX(ropeHeight));
+
+        // Create a new image for the label
         QImage imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
         imgFill.fill(QColor(255,0,0,255));
-        QImage imgFillTrns = imgFill.transformed(QTransform().rotate(45));
-//        pntr.drawRect(0, 0, imgFill.width(), imgFill.height());
+//        QImage imgFillTrns = imgFill.transformed(QTransform().rotate(45));
         ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
-        ropeBodyToLabel.emplace(ropeBody, ropeLabel);
+
+        // Add the body and label to the map
+        climberRopeBodyToLabel.emplace(ropeBody, ropeLabel);
     }
 
-//    connect(this, &MainWindow::newPos,
-//            this, &MainWindow::setClimberY);
+    for (b2Body* ropeBody : belayerRope) {
+        // Add a new label representing the rope segments body
+        QLabel* ropeLabel =  new QLabel(ui->centralwidget);
+        ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), convertBox2dX(ropeWidth), convertBox2dX(ropeHeight));
+
+        // Create a new image for the label
+        QImage imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
+        imgFill.fill(QColor(255,0,0,255));
+//        QImage imgFillTrns = imgFill.transformed(QTransform().rotate(45));
+        ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
+
+        // Add the body and label to the map
+        belayerRopeBodyToLabel.emplace(ropeBody, ropeLabel);
+    }
 
     QTimer::singleShot(30, this, &MainWindow::updateWorld);
-
 }
 
 MainWindow::~MainWindow()
@@ -128,86 +139,65 @@ void MainWindow::updateWorld() {
     world.Step(1.0/60.0, 6, 2);
 
     // Now print the position and angle of the body.
-    //b2Vec2 position = climber->GetPosition();
+    drawRope(climberRope, climberRopeBodyToLabel);
+    drawRope(belayerRope, belayerRopeBodyToLabel);
 
-    //emit newPos(position.y);
-
-    int i = 0;
-    for (b2Body* ropeBody : ropeBodies) {
-        //QLabel* ropeLabel =  new QLabel("#");
-        //ui->verticalLayout->addWidget(ropeLabel);
-        QLabel* ropeLabel = ropeBodyToLabel.at(ropeBody);
-        ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), ropeLabel->width(), ropeLabel->height());
-        QImage* imgFill = new QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
-        imgFill->fill(QColor(255,0,0,255));
-        QImage imgFillTrns = imgFill->transformed(QTransform().rotate(45));
-//        pntr.drawRect(0, 0, imgFill.width(), imgFill.height());
-        ropeLabel->setPixmap(QPixmap::fromImage(*imgFill));
-        //std::cout << i++ << ":" << ropeBody->GetAngle() << " : " << pntr.transform().isRotating() << std::endl;
-    }
-
-//    for (int i = 0; i < ropeBodies.size()-1; i++) {
-//        b2Vec2 pos1 = ropeBodies[i]->GetPosition();
-//        b2Vec2 pos2 = ropeBodies[i+1]->GetPosition();
-//        QImage image()
-//        QPainter painter(ui->centralwidget);
-
-
-//        painter.setPen(Qt::blue);
-//        painter.drawLine(pos1.x, pos1.y, pos2.x, pos2.y);
-//    }
     ui->climber->setGeometry(convertBox2dX(climber->GetPosition().x) - ui->climber->width()/2, convertBox2dY(climber->GetPosition().y) - ui->climber->height()/2, ui->climber->width(), ui->climber->height());
     ui->belayer->setGeometry(belayer->GetPosition().x*100, belayer->GetPosition().y*-100 + 500, ui->belayer->width(), ui->belayer->height());
     QTimer::singleShot(30, this, &MainWindow::updateWorld);
 }
 
-//void MainWindow::setClimberY(int y) {
-//    ui->climber->setGeometry(climber->GetPosition().x*100, y*-100 + 500, ui->climber->width(), ui->climber->height());
 
-//}
-
-vector<b2Body*> MainWindow::createRope(int length) {
+vector<b2Body*> MainWindow::createRope(int numSegments, b2Vec2 vecA, b2Vec2 vecB) {
+    b2Body *body;
     vector<b2Body*> bodies;
-    vector<b2RevoluteJoint*> joints;
+    vector<b2RevoluteJoint*> revoluteJoints;
     vector<b2RopeJoint*> ropeJoints;
 
-    float offset = 0.05;
-
-//    b2BodyDef bodyDef = b2BodyDef();
-//    bodyDef.type = b2_dynamicBody;
-
-    float width = 0.08, height = 0.1;
+    // Defines shape of each rope segment
     b2PolygonShape shape =  b2PolygonShape();
-    shape.SetAsBox(width/2, height/2);
+    shape.SetAsBox(ropeWidth/2, ropeHeight/2);
 
-    b2Body *body;
-    for(int i = 0; i < length; i++) {
+    // Determine how far apart each segment should be
+    // from the previous segment
+    float offsetX = (vecB.x - vecA.x)/numSegments;
+    float offsetY = (vecB.y - vecA.y)/numSegments;
+
+    // Define and create each segment body of the rope
+    for(int i = 0; i < numSegments; i++) {
         b2BodyDef bodyDef = b2BodyDef();
         bodyDef.type = b2_dynamicBody;
-        bodyDef.position.Set(1, 30 - i*offset);
 
-
+        // Place the segment with the offsets
+        bodyDef.position.Set(vecA.x + offsetX*i, vecA.y + offsetY*i);
         body = world.CreateBody((&bodyDef));
+        body->CreateFixture(&shape, 0.01);
+
+        // Revove collisions for the rope body
+        body->GetFixtureList()->SetSensor(true);
         bodies.push_back(body);
-        bodies.back()->CreateFixture(&shape, 1);
     }
 
+    // Define revolute joint
     b2RevoluteJointDef jointDef = b2RevoluteJointDef();
-    jointDef.localAnchorA.y = -height/1.3;
-    jointDef.localAnchorB.y = height/1.3;
+    jointDef.localAnchorA.y = -ropeHeight/1.1;
+    jointDef.localAnchorB.y = ropeHeight/1.1;
 
-    for (int i = 0; i < length - 1; i++) {
+    // Attatch each segment body to the next
+    for (int i = 0; i < numSegments - 1; i++) {
         jointDef.bodyA = bodies.at(i);
         jointDef.bodyB = bodies.at(i+1);
-        joints.push_back((b2RevoluteJoint*) world.CreateJoint(&jointDef));
+        revoluteJoints.push_back((b2RevoluteJoint*) world.CreateJoint(&jointDef));
     }
 
+    // Define rope joint
     b2RopeJointDef ropeJointDef = b2RopeJointDef();
-    ropeJointDef.localAnchorA.Set(0, -height/1.3);
-    ropeJointDef.localAnchorB.Set(0, height/1.3);
-    ropeJointDef.maxLength = height;
+    ropeJointDef.localAnchorA.Set(0, -ropeHeight/1.1);
+    ropeJointDef.localAnchorB.Set(0, ropeHeight/1.1);
+    ropeJointDef.maxLength = ropeHeight;
 
-    for (int i = 0; i < length - 1; i++) {
+    // Attatch each segment body to the next
+    for (int i = 0; i < numSegments - 1; i++) {
         ropeJointDef.bodyA = bodies.at(i);
         ropeJointDef.bodyB = bodies.at(i+1);
         ropeJoints.push_back((b2RopeJoint*) world.CreateJoint(&jointDef));
@@ -231,6 +221,53 @@ void MainWindow::createPulley(int x, int y, int length, b2Body* A, b2Body* B) {
     pulley.groundAnchorB.Set(x, y);
 
     world.CreateJoint(&pulley);
+}
+
+vector<b2Body*> MainWindow::connectRopeTo(float segmentDensity, b2Body* A, b2Body* B) {
+
+    // Calculate the distance from body A to body B
+    float xA = A->GetPosition().x;
+    float yA = A->GetPosition().y;
+    float xB = B->GetPosition().x;
+    float yB = B->GetPosition().y;
+    float distance = sqrt(pow(xB-xA, 2) + pow(yB-yA, 2));
+
+    // Determine number of segments to create
+    int numRopeSegments = segmentDensity*distance/ropeHeight;
+
+    vector<b2Body*> rope = createRope(numRopeSegments, A->GetPosition(), B->GetPosition());
+
+    // Define a joint
+    b2RevoluteJointDef jointDef = b2RevoluteJointDef();
+    jointDef.localAnchorA.y = 0.1;
+    jointDef.localAnchorB.y = 0.1;
+
+    // Joint A and rope head together
+    jointDef.bodyA = A;
+    jointDef.bodyB = rope.at(0);
+    world.CreateJoint(&jointDef);
+
+    // Joint B and rope tail together
+    jointDef.bodyA = B;
+    jointDef.bodyB = rope.at(rope.size()-1);
+    world.CreateJoint(&jointDef);
+
+    return rope;
+}
+
+void MainWindow::drawRope(vector<b2Body*> rope,  map<b2Body*, QLabel*> map) {
+    for (b2Body* ropeBody : rope) {
+
+        // Add a new label representing the rope segments body
+        QLabel* ropeLabel =  map.at(ropeBody);
+        ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), convertBox2dX(ropeWidth), convertBox2dX(ropeHeight));
+
+        // Create a new image for the label
+        QImage imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
+        imgFill.fill(QColor(200,0,175,255));
+        QImage imgFillTrns = imgFill.transformed(QTransform().rotate(45));
+        ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
+    }
 }
 
 int MainWindow::convertBox2dX(float input){
