@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -55,6 +55,8 @@ SOURCES += \
     Box2D/Dynamics/b2World.cpp \
     Box2D/Dynamics/b2WorldCallbacks.cpp \
     Box2D/Rope/b2Rope.cpp \
+    coursemodewindow.cpp \
+    introductionvideowindow.cpp \
     main.cpp \
     mainwindow.cpp \
     simulator.cpp
@@ -107,10 +109,14 @@ HEADERS += \
     Box2D/Dynamics/b2World.h \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
+    coursemodewindow.h \
+    introductionvideowindow.h \
     mainwindow.h \
     simulator.h
 
 FORMS += \
+    coursemodewindow.ui \
+    introductionvideowindow.ui \
     mainwindow.ui
 
 

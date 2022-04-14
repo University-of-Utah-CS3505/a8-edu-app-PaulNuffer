@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "introductionvideowindow.h"
+#include "coursemodewindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,7 +17,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+    void closeIntroWindowSlot();
+
+private slots:
+    void on_openIntroVideoButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+    IntroductionVideoWindow introVideoWindow;
 };
 #endif // MAINWINDOW_H
