@@ -19,12 +19,16 @@ public:
 
 public slots:
     void closeIntroWindowSlot();
+    void closeCourseModeWindowSlot();
 
 private slots:
     void on_openIntroVideoButton_clicked();
 
+    void on_courseModeButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     IntroductionVideoWindow introVideoWindow;
+    CourseModeWindow simulatorWindow;
 };
 #endif // MAINWINDOW_H

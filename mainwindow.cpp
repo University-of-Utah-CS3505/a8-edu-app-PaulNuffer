@@ -11,6 +11,10 @@ MainWindow::MainWindow(QWidget *parent)
             &IntroductionVideoWindow::closeIntroWindowSignal,
             this,
             &MainWindow::closeIntroWindowSlot);
+    connect(&simulatorWindow,
+            &CourseModeWindow::closeCourseModeWindowSignal,
+            this,
+            &MainWindow::closeCourseModeWindowSlot);
 }
 
 MainWindow::~MainWindow()
@@ -22,9 +26,19 @@ void MainWindow::closeIntroWindowSlot(){
     show();
 }
 
+void MainWindow::closeCourseModeWindowSlot(){
+    show();
+}
+
 void MainWindow::on_openIntroVideoButton_clicked()
 {
     this->hide();
     introVideoWindow.openIntroVideoWindow();
+}
+
+void MainWindow::on_courseModeButton_clicked()
+{
+    this->hide();
+    simulatorWindow.setupWindowAsCourseMode();
 }
 

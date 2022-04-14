@@ -18,6 +18,10 @@ IntroductionVideoWindow::IntroductionVideoWindow(QWidget *parent) :
             &IntroductionVideoWindow::startVideo,
             video,
             &QMediaPlayer::play);
+    connect(this,
+            &IntroductionVideoWindow::stopVideo,
+            video,
+            &QMediaPlayer::stop);
     connect(ui->volumeSlider,
             &QSlider::valueChanged,
             this,
@@ -38,6 +42,9 @@ void IntroductionVideoWindow::openIntroVideoWindow(){
     emit startVideo();
 }
 
+/**
+ * @brief Helper method to setup the video player for the introduction.
+ */
 void IntroductionVideoWindow::setupVideo(){
     video = new QMediaPlayer(this);
     videoAudio = new QAudioOutput(this);
@@ -56,16 +63,27 @@ IntroductionVideoWindow::~IntroductionVideoWindow()
     delete ui;
 }
 
+/**
+ * @brief Performs all necessary operations before hiding the introduction video window.
+ */
 void IntroductionVideoWindow::on_exitButton_clicked()
 {
+    emit stopVideo();
     hide();
     emit closeIntroWindowSignal();
 }
 
+/**
+ * @brief Emits the converted slider value.
+ */
 void IntroductionVideoWindow::sliderChange(){
     emit updateVolume(fromSliderToAudio());
 }
 
+/**
+ * @brief Converts the value from the volume slider to the appropriate scaling for QAudio.
+ * @return The float value of the volume scaled for lineaer volume increase.
+ */
 float IntroductionVideoWindow::fromSliderToAudio(){
     qreal audioObjectVolume = QAudio::convertVolume(ui->volumeSlider->value() / qreal(100),
                                                     QAudio::LogarithmicVolumeScale,

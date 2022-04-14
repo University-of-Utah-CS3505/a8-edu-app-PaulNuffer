@@ -6,26 +6,104 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>520</width>
-    <height>611</height>
+    <width>526</width>
+    <height>637</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="openIntroVideoButton">
+   <widget class="QFrame" name="mainWindowFrame">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>390</y>
-      <width>83</width>
-      <height>29</height>
+      <x>0</x>
+      <y>5</y>
+      <width>521</width>
+      <height>581</height>
      </rect>
     </property>
-    <property name="text">
-     <string>PushButton</string>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
     </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>350</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QPushButton" name="openIntroVideoButton">
+       <property name="minimumSize">
+        <size>
+         <width>350</width>
+         <height>45</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>350</width>
+         <height>45</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Introduction</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QPushButton" name="courseModeButton">
+       <property name="minimumSize">
+        <size>
+         <width>300</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Course Mode</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QPushButton" name="sandboxModeButton">
+       <property name="minimumSize">
+        <size>
+         <width>300</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Sandbox Mode</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -33,7 +111,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>520</width>
+     <width>526</width>
      <height>25</height>
     </rect>
    </property>

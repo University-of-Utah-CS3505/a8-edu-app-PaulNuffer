@@ -17,14 +17,21 @@ public:
     void setupWindowAsCourseMode();
 
 signals:
-    void courseModeWindowClosedSignal();
+    void closeCourseModeWindowSignal();
 
 private slots:
     void on_mainMenuButton_clicked();
 
+    void on_jumpButton_clicked();
+
+    void on_sitButton_clicked();
+
+    void on_stayButton_clicked();
+
 private:
     Ui::CourseModeWindow *ui;
     void applyStylesheets();
+    void showChoiceResults();
 };
 
 #endif // COURSEMODEWINDOW_H

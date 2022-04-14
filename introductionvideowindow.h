@@ -27,6 +27,7 @@ public slots:
 signals:
     void closeIntroWindowSignal();
     void startVideo();
+    void stopVideo();
     void updateVolume(float volume);
 
 private slots:
