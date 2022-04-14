@@ -16,9 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "Box2D/Common/b2BlockAllocator.h"
+#include <Box2D/Common/b2BlockAllocator.h>
 #include <limits.h>
-#include <string.h>
+#include <memory.h>
 #include <stddef.h>
 
 int32 b2BlockAllocator::s_blockSizes[b2_blockSizes] = 
@@ -97,7 +97,7 @@ b2BlockAllocator::~b2BlockAllocator()
 void* b2BlockAllocator::Allocate(int32 size)
 {
 	if (size == 0)
-		return nullptr;
+		return NULL;
 
 	b2Assert(0 < size);
 
@@ -143,7 +143,7 @@ void* b2BlockAllocator::Allocate(int32 size)
 			block->next = next;
 		}
 		b2Block* last = (b2Block*)((int8*)chunk->blocks + blockSize * (blockCount - 1));
-		last->next = nullptr;
+		last->next = NULL;
 
 		m_freeLists[index] = chunk->blocks->next;
 		++m_chunkCount;

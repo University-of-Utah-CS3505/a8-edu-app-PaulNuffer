@@ -56,7 +56,8 @@ SOURCES += \
     Box2D/Dynamics/b2WorldCallbacks.cpp \
     Box2D/Rope/b2Rope.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    simulator.cpp
 
 HEADERS += \
     Box2D/Box2D.h \
@@ -106,13 +107,14 @@ HEADERS += \
     Box2D/Dynamics/b2World.h \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
-    mainwindow.h
+    mainwindow.h \
+    simulator.h
 
 FORMS += \
     mainwindow.ui
 
 TRANSLATIONS += \
-    A8-Whip-inator_en_US.ts
+    A8-whip-inator_en_US.ts
 CONFIG += lrelease
 CONFIG += embed_translations
 
