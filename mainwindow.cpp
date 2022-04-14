@@ -180,8 +180,8 @@ vector<b2Body*> MainWindow::createRope(int numSegments, b2Vec2 vecA, b2Vec2 vecB
 
     // Define revolute joint
     b2RevoluteJointDef jointDef = b2RevoluteJointDef();
-    jointDef.localAnchorA.y = -ropeHeight/1.1;
-    jointDef.localAnchorB.y = ropeHeight/1.1;
+    jointDef.localAnchorA.y = -ropeHeight/100;
+    jointDef.localAnchorB.y = ropeHeight/100;
 
     // Attatch each segment body to the next
     for (int i = 0; i < numSegments - 1; i++) {
@@ -192,8 +192,8 @@ vector<b2Body*> MainWindow::createRope(int numSegments, b2Vec2 vecA, b2Vec2 vecB
 
     // Define rope joint
     b2RopeJointDef ropeJointDef = b2RopeJointDef();
-    ropeJointDef.localAnchorA.Set(0, -ropeHeight/1.1);
-    ropeJointDef.localAnchorB.Set(0, ropeHeight/1.1);
+    ropeJointDef.localAnchorA.Set(0, -ropeHeight/100);
+    ropeJointDef.localAnchorB.Set(0, ropeHeight/100);
     ropeJointDef.maxLength = ropeHeight;
 
     // Attatch each segment body to the next
