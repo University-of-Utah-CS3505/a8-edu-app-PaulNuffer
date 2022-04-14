@@ -138,6 +138,8 @@ void MainWindow::updateWorld() {
     // It is generally best to keep the time step and iterations fixed.
     world.Step(1.0/60.0, 6, 2);
 
+    // UPDATE ROPES HELPER METHOD
+
     // Now print the position and angle of the body.
     drawRope(climberRope, climberRopeBodyToLabel);
     drawRope(belayerRope, belayerRopeBodyToLabel);
@@ -268,6 +270,22 @@ void MainWindow::drawRope(vector<b2Body*> rope,  map<b2Body*, QLabel*> map) {
         QImage imgFillTrns = imgFill.transformed(QTransform().rotate(45));
         ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
     }
+}
+
+// UPDATE ROPES HELPER METHOD
+
+// find distance from bolt to climber
+// find distance from bolt to belayer
+// find # segments for each
+// for each extra segment in the rope {linked list style remove}
+// OR for each missing segment in the rope {add one}
+// Adding a segment needs to cut a body and 2 joints to rope + one joint to climber
+    // AND remove the joint to the climber from previous rope
+// Removing a segment needs to cut a body and 2 joints to the rope + one to the climber
+    // AND add one to the climber
+
+void MainWindow::updateRopes(b2Body* bolt) {
+
 }
 
 int MainWindow::convertBox2dX(float input){
