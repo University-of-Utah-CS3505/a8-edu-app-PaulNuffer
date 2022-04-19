@@ -146,6 +146,15 @@ void MainWindow::updateWorld() {
 
     ui->climber->setGeometry(convertBox2dX(climber->GetPosition().x) - ui->climber->width()/2, convertBox2dY(climber->GetPosition().y) - ui->climber->height()/2, ui->climber->width(), ui->climber->height());
     ui->belayer->setGeometry(belayer->GetPosition().x*100, belayer->GetPosition().y*-100 + 500, ui->belayer->width(), ui->belayer->height());
+//    b2JointEdge* joints = climber->GetJointList();
+//    while(joints->next != nullptr){
+//        std::cout << joints->joint->GetBodyA() << std::endl;
+//        std::cout << joints->joint->GetBodyB() << std::endl;
+//    }
+    int numRopeSegments = climberRope.size() + belayerRope.size();
+    std::cout << "Climber Rope: " << climberRope.size() << std::endl;
+    std::cout << "Belayer Rope: " << belayerRope.size() << std::endl;
+    std::cout << numRopeSegments << std::endl;
     QTimer::singleShot(30, this, &MainWindow::updateWorld);
 }
 
@@ -236,7 +245,10 @@ vector<b2Body*> MainWindow::connectRopeTo(b2Body* A, b2Body* B) {
 
     // Determine number of segments to create
     int numRopeSegments = (SEGMENT_DENSITY*distance)/ropeHeight;
-
+    if(numRopeSegments == 0){
+        vector<b2Body*> empty;
+        return empty;
+    }
     vector<b2Body*> rope = createRope(numRopeSegments, A->GetPosition(), B->GetPosition());
 
     // Define a joint
@@ -292,6 +304,7 @@ void MainWindow::updateRopes() {
     float climberX = climber->GetPosition().x;
     float climberY = climber->GetPosition().y;
 
+
     // Find distance from climber to bolt
     float distanceClimberToBolt = sqrt(pow(boltX-climberX, 2) + pow(boltY-climberY, 2));
 
@@ -300,17 +313,17 @@ void MainWindow::updateRopes() {
 
     // If climber moves away from bolt
     if(numClimberSegmentsDesired > (int)climberRope.size()) {
-        addSegments(climber, climberRope, climberRopeBodyToLabel);
-        removeSegments(belayer, belayerRope, belayerRopeBodyToLabel);
+        int numSegments = addSegments(climber, climberRope, climberRopeBodyToLabel);
+        removeSegments(belayer, belayerRope, belayerRopeBodyToLabel, numSegments);
     }
     // If climber moves towards bolt
     else if(numClimberSegmentsDesired < (int)climberRope.size()){
-        addSegments(belayer, belayerRope, belayerRopeBodyToLabel);
-        removeSegments(climber, climberRope, climberRopeBodyToLabel);
+        int numSegments = addSegments(belayer, belayerRope, belayerRopeBodyToLabel);
+        removeSegments(climber, climberRope, climberRopeBodyToLabel, numSegments);
     }
 }
 
-void MainWindow::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map) {
+int MainWindow::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map) {
 
     // Delete the end of the rope, which is connected to the climber
     b2Body* endRope = rope.back();
@@ -322,6 +335,8 @@ void MainWindow::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, Q
     // List of rope bodies we will add
     vector<b2Body*> ropeBodiesToAdd = connectRopeTo(rope.back(), body);
 
+    if(ropeBodiesToAdd.size() == 0)
+            return -1;
     // Update map to connect labels to each body
     for(b2Body* ropeBody: ropeBodiesToAdd){
         rope.push_back(ropeBody);
@@ -337,26 +352,15 @@ void MainWindow::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, Q
         // Add the body and label to the map
         map.emplace(ropeBody, ropeLabel);
     }
+    return ropeBodiesToAdd.size() - 2;
 }
 
-void MainWindow::removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map) {
-    float boltX = bolt->GetPosition().x;
-    float boltY = bolt->GetPosition().y;
-    float bodyX = body->GetPosition().x;
-    float bodyY = body->GetPosition().y;
-
-    // Find distances of climber to bolt
-    float distanceBodyToBolt = sqrt(pow(boltX-bodyX, 2) + pow(boltY-bodyY, 2));
-
-    // Find desired number of segments
-    int numSegmentsDesired = (SEGMENT_DENSITY*distanceBodyToBolt)/ropeHeight;
-
-    int numSegmentsOriginal = rope.size();
-    int numSegmentsToRemove = (int)(numSegmentsOriginal - numSegmentsDesired) + 1;
-
+void MainWindow::removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map, int numSegmentsToRemove) {
+    if(numSegmentsToRemove <= 0)
+        return;
     // Fully delete all of the extra rope bodies
     // Remove one additional rope body because we will need to add one back
-    for(int i = 0; i < numSegmentsToRemove; i++){
+    for(int i = 0; i <= numSegmentsToRemove; i++){
         b2Body* endRope = rope.back();
         rope.pop_back();
         //rope.erase(rope.end());
@@ -374,7 +378,7 @@ void MainWindow::removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*
     // Define a joint
     b2RevoluteJointDef revoluteJointDef = b2RevoluteJointDef();
     revoluteJointDef.localAnchorA.y = -ropeHeight/100;
-    revoluteJointDef.localAnchorB.y = -ropeHeight/100;
+    revoluteJointDef.localAnchorB.y = ropeHeight/100;
 
     // Joint A and rope head together
     revoluteJointDef.bodyA = rope.back();
