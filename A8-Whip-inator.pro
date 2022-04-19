@@ -59,6 +59,7 @@ SOURCES += \
     introductionvideowindow.cpp \
     main.cpp \
     mainwindow.cpp \
+    simulationviewwidget.cpp \
     simulator.cpp
 
 HEADERS += \
@@ -112,6 +113,7 @@ HEADERS += \
     coursemodewindow.h \
     introductionvideowindow.h \
     mainwindow.h \
+    simulationviewwidget.h \
     simulator.h
 
 FORMS += \

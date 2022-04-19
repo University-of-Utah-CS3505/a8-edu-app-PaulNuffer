@@ -42,3 +42,9 @@ void MainWindow::on_courseModeButton_clicked()
     simulatorWindow.setupWindowAsCourseMode();
 }
 
+void MainWindow::on_sandboxModeButton_clicked()
+{
+    this->hide();
+    simulatorWindow.setupWindowAsSandboxMode();
+}
+

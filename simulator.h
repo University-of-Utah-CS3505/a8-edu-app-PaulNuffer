@@ -18,6 +18,13 @@ public:
     b2Vec2 getClimberPos();
     b2Vec2 getBelayerPos();
     void createPulley(float x, float y, float length, b2Body* A, b2Body* B);
+    void setClimberHeight(float height);
+    void setBelayerHeight(float height);
+    void setClimberMass(float mass);
+    void setBelayerMass(float mass);
+    float getClimberMass();
+    float getClimberForce();
+    float getBelayerForce();
 
     //Rope code??
     vector<b2Body*> createRope(int length);

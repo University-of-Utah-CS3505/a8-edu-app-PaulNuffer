@@ -26,6 +26,8 @@ private slots:
 
     void on_courseModeButton_clicked();
 
+    void on_sandboxModeButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     IntroductionVideoWindow introVideoWindow;

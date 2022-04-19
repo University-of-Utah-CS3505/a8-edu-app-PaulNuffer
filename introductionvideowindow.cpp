@@ -52,7 +52,7 @@ void IntroductionVideoWindow::setupVideo(){
 
     outputWidget->setGeometry(0, 0, 500, 500);
     outputWidget->resize(500, 500);
-    video->setSource((QUrl::fromLocalFile("C:/Users/Owner/Desktop/test.mp4")));
+    video->setSource((QUrl::fromLocalFile("C:/Users/Owner/Desktop/test2.mp4")));
 
     video->setAudioOutput(videoAudio);
     video->setVideoOutput(outputWidget);

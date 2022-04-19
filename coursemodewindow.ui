@@ -51,39 +51,13 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>120</y>
+      <y>110</y>
       <width>111</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Belayer Weight:</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="leaderWeightValueSpinbox">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>20</y>
-      <width>42</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="belayerWeightValueSpinbox">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>120</y>
-      <width>42</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>false</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="stayButton">
@@ -227,7 +201,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>410</y>
+      <y>430</y>
       <width>261</width>
       <height>20</height>
      </rect>
@@ -243,7 +217,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>70</y>
+      <y>60</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -252,16 +226,160 @@
      <string>Leader Height:</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="leaderHeightValueSpinbox">
+   <widget class="QLabel" name="belayerHeightTextLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>150</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Belayer Height:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="runSimulationButton">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>530</y>
+      <width>151</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>32</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Run</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="leaderHeightValueSpinbox">
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>70</y>
-      <width>42</width>
-      <height>26</height>
+      <y>60</y>
+      <width>67</width>
+      <height>29</height>
      </rect>
     </property>
    </widget>
+   <widget class="QDoubleSpinBox" name="leaderWeightValueSpinbox">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>20</y>
+      <width>67</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <double>1000.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="belayerWeightValueSpinbox">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>110</y>
+      <width>67</width>
+      <height>29</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="belayerHeightValueSpinbox">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>150</y>
+      <width>67</width>
+      <height>29</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="climberMassUnitsLabel">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>20</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="text">
+     <string>kg</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="belayerMassUnitsLabel">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>110</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="text">
+     <string>kg</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="climberLengthUnitsLabel">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>60</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="belayerLengthUnitsLabel">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>150</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <zorder>runSimulationButton</zorder>
+   <zorder>leaderWeightTextLabel</zorder>
+   <zorder>belayerWeightTextLabel</zorder>
+   <zorder>stayButton</zorder>
+   <zorder>sitButton</zorder>
+   <zorder>jumpButton</zorder>
+   <zorder>maxLeaderNewtonsTextLabel</zorder>
+   <zorder>maxLeaderNewtonsOutputLabel</zorder>
+   <zorder>currentLeaderNewtonsTextLabel</zorder>
+   <zorder>currentLeaderNewtonsOutputLabel</zorder>
+   <zorder>line</zorder>
+   <zorder>line_2</zorder>
+   <zorder>leaderHeightTextLabel</zorder>
+   <zorder>belayerHeightTextLabel</zorder>
+   <zorder>leaderHeightValueSpinbox</zorder>
+   <zorder>leaderWeightValueSpinbox</zorder>
+   <zorder>belayerWeightValueSpinbox</zorder>
+   <zorder>belayerHeightValueSpinbox</zorder>
+   <zorder>climberMassUnitsLabel</zorder>
+   <zorder>belayerMassUnitsLabel</zorder>
+   <zorder>climberLengthUnitsLabel</zorder>
+   <zorder>belayerLengthUnitsLabel</zorder>
   </widget>
   <widget class="QFrame" name="simulationFrame">
    <property name="geometry">
@@ -273,7 +391,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(0, 0, 0);</string>
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
