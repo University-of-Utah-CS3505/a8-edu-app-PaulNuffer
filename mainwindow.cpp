@@ -95,17 +95,18 @@ MainWindow::MainWindow(QWidget *parent)
     climberRope = connectRopeTo(bolt, climber);
     belayerRope = connectRopeTo(bolt, belayer);
 
+    QLabel* ropeLabel;
+    //QImage imgFill;
 
     for (b2Body* ropeBody : climberRope) {
         // Add a new label representing the rope segments body
-        QLabel* ropeLabel =  new QLabel(ui->centralwidget);
+        ropeLabel =  new QLabel(ui->centralwidget);
         ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), convertBox2dX(ropeWidth), convertBox2dX(ropeHeight));
 
         // Create a new image for the label
-        QImage imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
-        imgFill.fill(QColor(255,0,0,255));
-//        QImage imgFillTrns = imgFill.transformed(QTransform().rotate(45));
-        ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
+        //imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
+        //imgFill.fill(QColor(255,0,0,255));
+        //ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
 
         // Add the body and label to the map
         climberRopeBodyToLabel.emplace(ropeBody, ropeLabel);
@@ -113,14 +114,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     for (b2Body* ropeBody : belayerRope) {
         // Add a new label representing the rope segments body
-        QLabel* ropeLabel =  new QLabel(ui->centralwidget);
+        ropeLabel =  new QLabel(ui->centralwidget);
         ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), convertBox2dX(ropeWidth), convertBox2dX(ropeHeight));
 
         // Create a new image for the label
-        QImage imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
-        imgFill.fill(QColor(255,0,0,255));
-//        QImage imgFillTrns = imgFill.transformed(QTransform().rotate(45));
-        ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
+        //imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
+        //imgFill.fill(QColor(255,0,0,255));
+        //ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
 
         // Add the body and label to the map
         belayerRopeBodyToLabel.emplace(ropeBody, ropeLabel);
@@ -251,24 +251,25 @@ vector<b2Body*> MainWindow::connectRopeTo(b2Body* A, b2Body* B) {
 
     // Joint B and rope tail together
     jointDef.bodyA = B;
-    jointDef.bodyB = rope.at(rope.size()-1);
+    jointDef.bodyB = rope.back();
     world.CreateJoint(&jointDef);
 
     return rope;
 }
 
-void MainWindow::drawRope(vector<b2Body*> rope,  map<b2Body*, QLabel*> map) {
+void MainWindow::drawRope(vector<b2Body*>& rope,  map<b2Body*, QLabel*>& map) {
+
     for (b2Body* ropeBody : rope) {
+        if(map.count(ropeBody) != 0) {
+            // Add a new label representing the rope segments body
+            QLabel* ropeLabel =  map.at(ropeBody);
+            ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), convertBox2dX(ropeWidth), convertBox2dX(ropeHeight));
 
-        // Add a new label representing the rope segments body
-        QLabel* ropeLabel =  map.at(ropeBody);
-        ropeLabel->setGeometry(convertBox2dX(ropeBody->GetPosition().x), convertBox2dY(ropeBody->GetPosition().y), convertBox2dX(ropeWidth), convertBox2dX(ropeHeight));
-
-        // Create a new image for the label
-        QImage imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
-        imgFill.fill(QColor(200,0,175,255));
-        QImage imgFillTrns = imgFill.transformed(QTransform().rotate(45));
-        ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
+            // Create a new image for the label
+            QImage imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
+            imgFill.fill(QColor(200,0,175,255));
+            ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
+        }
     }
 }
 
@@ -285,7 +286,6 @@ void MainWindow::drawRope(vector<b2Body*> rope,  map<b2Body*, QLabel*> map) {
     // AND add one to the climber
 
 void MainWindow::updateRopes() {
-
     // Get positions
     float boltX = bolt->GetPosition().x;
     float boltY = bolt->GetPosition().y;
@@ -299,28 +299,28 @@ void MainWindow::updateRopes() {
     int numClimberSegmentsDesired = (SEGMENT_DENSITY*distanceClimberToBolt)/ropeHeight;
 
     // If climber moves away from bolt
-    if(numClimberSegmentsDesired > (int) climberRope.size()) {
+    if(numClimberSegmentsDesired > (int)climberRope.size()) {
         addSegments(climber, climberRope, climberRopeBodyToLabel);
         removeSegments(belayer, belayerRope, belayerRopeBodyToLabel);
     }
     // If climber moves towards bolt
-    else {
+    else if(numClimberSegmentsDesired < (int)climberRope.size()){
         addSegments(belayer, belayerRope, belayerRopeBodyToLabel);
         removeSegments(climber, climberRope, climberRopeBodyToLabel);
     }
 }
 
-void MainWindow::addSegments(b2Body* body, vector<b2Body*> rope, map<b2Body*, QLabel*> map) {
+void MainWindow::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map) {
 
     // Delete the end of the rope, which is connected to the climber
-    b2Body* endRope = rope.at(rope.size()-1);
+    b2Body* endRope = rope.back();
     // rope.erase(rope.end());
     rope.pop_back();
     map.erase(endRope);
     world.DestroyBody(endRope);
 
     // List of rope bodies we will add
-    vector<b2Body*> ropeBodiesToAdd = connectRopeTo(rope.at(rope.size()-1), body);
+    vector<b2Body*> ropeBodiesToAdd = connectRopeTo(rope.back(), body);
 
     // Update map to connect labels to each body
     for(b2Body* ropeBody: ropeBodiesToAdd){
@@ -339,7 +339,7 @@ void MainWindow::addSegments(b2Body* body, vector<b2Body*> rope, map<b2Body*, QL
     }
 }
 
-void MainWindow::removeSegments(b2Body* body, vector<b2Body*> rope, map<b2Body*, QLabel*> map) {
+void MainWindow::removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map) {
     float boltX = bolt->GetPosition().x;
     float boltY = bolt->GetPosition().y;
     float bodyX = body->GetPosition().x;
@@ -351,10 +351,13 @@ void MainWindow::removeSegments(b2Body* body, vector<b2Body*> rope, map<b2Body*,
     // Find desired number of segments
     int numSegmentsDesired = (SEGMENT_DENSITY*distanceBodyToBolt)/ropeHeight;
 
+    int numSegmentsOriginal = rope.size();
+    int numSegmentsToRemove = (int)(numSegmentsOriginal - numSegmentsDesired) + 1;
+
     // Fully delete all of the extra rope bodies
     // Remove one additional rope body because we will need to add one back
-    for(int i = 0; i < (int) (numSegmentsDesired - rope.size()) + 1; i++){
-        b2Body* endRope = rope.at(rope.size()-1);
+    for(int i = 0; i < numSegmentsToRemove; i++){
+        b2Body* endRope = rope.back();
         rope.pop_back();
         //rope.erase(rope.end());
         map.erase(endRope);
@@ -363,12 +366,39 @@ void MainWindow::removeSegments(b2Body* body, vector<b2Body*> rope, map<b2Body*,
     }
 
     // Add one rope body and connect it to the climber
-    vector<b2Body*> ropeToAdd = connectRopeTo(rope.at(rope.size()-1), climber);
-    rope.push_back(ropeToAdd.at(0));
+    //vector<b2Body*> ropeToAdd = connectRopeTo(rope.back(), climber);
+    //rope.push_back(ropeToAdd.at(0));
+    vector<b2Body*> ropeToAdd = createRope(1, rope.back()->GetPosition(), body->GetPosition());
+    b2Body* newRopeBody = ropeToAdd.front();
+
+    // Define a joint
+    b2RevoluteJointDef revoluteJointDef = b2RevoluteJointDef();
+    revoluteJointDef.localAnchorA.y = -ropeHeight/100;
+    revoluteJointDef.localAnchorB.y = -ropeHeight/100;
+
+    // Joint A and rope head together
+    revoluteJointDef.bodyA = rope.back();
+    revoluteJointDef.bodyB = newRopeBody;
+    world.CreateJoint(&revoluteJointDef);
+
+    // Joint B and rope tail together
+    revoluteJointDef.bodyA = body;
+    revoluteJointDef.bodyB = newRopeBody;
+    world.CreateJoint(&revoluteJointDef);
+
+    // Define rope joint
+    b2RopeJointDef ropeJointDef = b2RopeJointDef();
+    ropeJointDef.localAnchorA.Set(0, -ropeHeight/100);
+    ropeJointDef.localAnchorB.Set(0, ropeHeight/100);
+    ropeJointDef.maxLength = ropeHeight;
+
+    ropeJointDef.bodyA = rope.back();
+    ropeJointDef.bodyB = newRopeBody;
+    world.CreateJoint(&ropeJointDef);
 
     // Add a new label representing the rope segments body
     QLabel* ropeLabel =  new QLabel(ui->centralwidget);
-    ropeLabel->setGeometry(convertBox2dX(ropeToAdd.at(0)->GetPosition().x), convertBox2dY(ropeToAdd.at(0)->GetPosition().y), convertBox2dX(ropeWidth), convertBox2dX(ropeHeight));
+    ropeLabel->setGeometry(convertBox2dX(newRopeBody->GetPosition().x), convertBox2dY(newRopeBody->GetPosition().y), convertBox2dX(ropeWidth), convertBox2dX(ropeHeight));
 
     // Create a new image for the label
     QImage imgFill = QImage(convertBox2dX(ropeWidth), convertBox2dY(ropeHeight), QImage::Format_ARGB32);
@@ -376,7 +406,8 @@ void MainWindow::removeSegments(b2Body* body, vector<b2Body*> rope, map<b2Body*,
     ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
 
     // Add the body and label to the map
-    map.emplace(ropeToAdd.at(0), ropeLabel);
+    map.emplace(newRopeBody, ropeLabel);
+    ropeToAdd.clear();
 }
 
 int MainWindow::convertBox2dX(float input){

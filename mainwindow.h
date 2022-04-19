@@ -36,16 +36,15 @@ public:
     void createPulley(int x, int y, int length, b2Body* A, b2Body* B);
     vector<b2Body*> connectRopeTo(b2Body* A, b2Body* B);
     vector<b2Body*> createRope(int numSegments, b2Vec2 vecA, b2Vec2 vecB);
-    void drawRope(vector<b2Body*> rope,  map<b2Body*, QLabel*> map);
+    void drawRope(vector<b2Body*>& rope,  map<b2Body*, QLabel*>& map);
     void updateRopes();
-    void addSegments(b2Body* body, vector<b2Body*> rope, map<b2Body*, QLabel*> map);
-    void removeSegments(b2Body* body, vector<b2Body*> rope, map<b2Body*, QLabel*> map);
+    void addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map);
+    void removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map);
 
 signals:
     void newPos(int);
 public slots:
     void updateWorld();
-   // void setClimberY(int);
 
 private:
     b2World world;
