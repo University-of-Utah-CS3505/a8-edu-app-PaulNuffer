@@ -28,7 +28,7 @@ public:
     b2Body* belayer;
     vector<b2Body*> climberRope;
     vector<b2Body*> belayerRope;
-    const float SEGMENT_DENSITY = 2;
+    const float SEGMENT_DENSITY = 1.5;
 
     map<b2Body*, QLabel*> climberRopeBodyToLabel;
     map<b2Body*, QLabel*> belayerRopeBodyToLabel;

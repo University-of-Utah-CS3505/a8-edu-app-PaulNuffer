@@ -183,8 +183,9 @@ vector<b2Body*> MainWindow::createRope(int numSegments, b2Vec2 vecA, b2Vec2 vecB
 
         // Place the segment with the offsets
         bodyDef.position.Set(vecA.x + offsetX*i, vecA.y + offsetY*i);
+        bodyDef.linearDamping = 1.5f;
         body = world.CreateBody((&bodyDef));
-        body->CreateFixture(&shape, 0.01);
+        body->CreateFixture(&shape, 0.8f);
 
         // Revove collisions for the rope body
         body->GetFixtureList()->SetSensor(true);
@@ -381,10 +382,6 @@ int MainWindow::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QL
     revoluteJointDef.bodyA = body;
     revoluteJointDef.bodyB = rope.back();
     world.CreateJoint(&revoluteJointDef);
-
-
-
-
 
     if(ropeBodiesToAdd.size() == 0)
             return -1;
