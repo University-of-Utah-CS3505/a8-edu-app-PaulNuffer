@@ -18,29 +18,38 @@ public:
     void updateWorld();
 
 public slots:
-    void startSimulationTimerSlot();
+    void simulationStartSlot();
+    void simulationStopSlot();
     void climberHeightUpdatedSlot(float);
     void climberWeightUpdatedSlot(float);
     void belayerHeightUpdatedSlot(float);
     void belayerWeightUpdatedSlot(float);
+    void pulleyHeightUpdatedSlot(float);
+    void pulleyRopeLengthUpdatedSlot(float);
+    void resetSimulationDataSlot();
 
 signals:
-    void worldUpdated(int belayerNewtons, int climberNewtons);
-    void simulationCompleteSignal();
+    void worldUpdated(int currentClimberNewtons, int maxClimberNewtons, int currentBelayerNewtons, int maxBelayerNewtons);
 
 private slots:
-    void stopSimulationTimerSlot();
 
 private:
     enum WindowMode{course, sandbox};
-    WindowMode currentWindowMode;
-    simulator sim;
-    QTimer* worldUpdateTimer;
+    float defaultX;
+    int maxClimberNewtons=0;
+    int maxBelayerNewtons=0;
     int updateDelay = 17;
     int simulationDuration = 5000;
     int groundLevel = 600;
+    int xScaling = 30;
+    WindowMode currentWindowMode;
+    simulator sim;
+    QTimer* worldUpdateTimer;
+
 
     void drawWorld();
+
+    bool simRunning = false;
 };
 
 #endif // SIMULATIONVIEWWIDGET_H

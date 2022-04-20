@@ -27,13 +27,13 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
             this,
             &CourseModeWindow::updateWindow);
     connect(this,
-            &CourseModeWindow::startSimulationTimerSignal,
+            &CourseModeWindow::simulationStartSignal,
             simView,
-            &SimulationViewWidget::startSimulationTimerSlot);
-    connect(simView,
-            &SimulationViewWidget::simulationCompleteSignal,
-            this,
-            &CourseModeWindow::simulationCompleteSlot);
+            &SimulationViewWidget::simulationStartSlot);
+    connect(this,
+            &CourseModeWindow::simulationStopSignal,
+            simView,
+            &SimulationViewWidget::simulationStopSlot);
     connect(this,
             &CourseModeWindow::belayerHeightUpdatedSignal,
             simView,
@@ -50,6 +50,18 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
             &CourseModeWindow::climberWeightUpdatedSignal,
             simView,
             &SimulationViewWidget::climberWeightUpdatedSlot);
+    connect(this,
+            &CourseModeWindow::resetSimulationDataSignal,
+            simView,
+            &SimulationViewWidget::resetSimulationDataSlot);
+    connect(this,
+            &CourseModeWindow::pulleyHeightUpdatedSignal,
+            simView,
+            &SimulationViewWidget::pulleyHeightUpdatedSlot);
+    connect(this,
+            &CourseModeWindow::pulleyRopeLengthUpdatedSignal,
+            simView,
+            &SimulationViewWidget::pulleyRopeLengthUpdatedSlot);
 }
 
 CourseModeWindow::~CourseModeWindow()
@@ -66,6 +78,8 @@ void CourseModeWindow::setupWindowAsCourseMode(){
     ui->belayerHeightValueSpinbox->setReadOnly(true);
     ui->leaderWeightValueSpinbox->setReadOnly(true);
     ui->leaderHeightValueSpinbox->setReadOnly(true);
+    ui->boltHeightValueSpinbox->setReadOnly(true);
+    ui->ropeLengthValueSpinbox->setReadOnly(true);
     ui->runSimulationButton->setEnabled(false);
     ui->runSimulationButton->hide();
     ui->jumpButton->setEnabled(true);
@@ -74,6 +88,7 @@ void CourseModeWindow::setupWindowAsCourseMode(){
     ui->jumpButton->show();
     ui->sitButton->show();
     ui->stayButton->show();
+    resetUIElements();
     show();
 }
 
@@ -85,6 +100,8 @@ void CourseModeWindow::setupWindowAsSandboxMode(){
     ui->belayerHeightValueSpinbox->setReadOnly(false);
     ui->leaderWeightValueSpinbox->setReadOnly(false);
     ui->leaderHeightValueSpinbox->setReadOnly(false);
+    ui->boltHeightValueSpinbox->setReadOnly(false);
+    ui->ropeLengthValueSpinbox->setReadOnly(false);
     ui->runSimulationButton->setEnabled(true);
     ui->runSimulationButton->show();
     ui->jumpButton->setEnabled(false);
@@ -93,6 +110,7 @@ void CourseModeWindow::setupWindowAsSandboxMode(){
     ui->jumpButton->hide();
     ui->sitButton->hide();
     ui->stayButton->hide();
+    resetUIElements();
     show();
 }
 
@@ -101,8 +119,6 @@ void CourseModeWindow::setupWindowAsSandboxMode(){
  */
 void CourseModeWindow::on_mainMenuButton_clicked()
 {
-    ui->belayerWeightValueSpinbox->setReadOnly(false);
-    ui->leaderWeightValueSpinbox->setReadOnly(false);
     hide();
     emit closeCourseModeWindowSignal();
 }
@@ -110,11 +126,13 @@ void CourseModeWindow::on_mainMenuButton_clicked()
 /**
  * @brief Updates window widgets, paint objects, and alerts the simulator widget to update its simulation world.
  */
-void CourseModeWindow::updateWindow(int belayerNewtons, int climberNewtons){
+void CourseModeWindow::updateWindow(int currentClimberNewtons, int maxClimberNewtons, int currentBelayerNewtons, int maxBelayerNewtons){
     ui->belayerHeightValueSpinbox->setValue(simView->getBelayerPosition().y);
     ui->leaderHeightValueSpinbox->setValue(simView->getLeaderPosition().y);
-    ui->currentLeaderNewtonsOutputLabel->setText(QString::number(climberNewtons));
-    ui->maxLeaderNewtonsOutputLabel->setText(QString::number(belayerNewtons));
+    ui->currentLeaderNewtonsOutputLabel->setText(QString::number(currentClimberNewtons));
+    ui->maxLeaderNewtonsOutputLabel->setText(QString::number(maxClimberNewtons));
+    ui->currentBelayerNewtonsOutputLabel->setText(QString::number(currentBelayerNewtons));
+    ui->maxBelayerNewtonsOutputLabel->setText(QString::number(maxBelayerNewtons));
 }
 
 /**
@@ -180,21 +198,21 @@ void CourseModeWindow::applyStylesheets(){
 void CourseModeWindow::on_jumpButton_clicked()
 {
     showChoiceResults();
-    emit startSimulationTimerSignal();
+    emit simulationStartSignal();
 }
 
 
 void CourseModeWindow::on_sitButton_clicked()
 {
     showChoiceResults();
-    emit startSimulationTimerSignal();
+    emit simulationStartSignal();
 }
 
 
 void CourseModeWindow::on_stayButton_clicked()
 {
     showChoiceResults();
-    emit startSimulationTimerSignal();
+    emit simulationStartSignal();
 }
 
 /**
@@ -202,8 +220,20 @@ void CourseModeWindow::on_stayButton_clicked()
  */
 void CourseModeWindow::on_runSimulationButton_clicked()
 {
-    disableSpinboxes();
-    emit startSimulationTimerSignal();
+    switch(currSimState){
+    case stopped:
+        disableSpinboxes();
+        emit simulationStartSignal();
+        ui->runSimulationButton->setText("Stop");
+        currSimState = running;
+        break;
+    case running:
+        enableSpinboxes();
+        emit simulationStopSignal();
+        ui->runSimulationButton->setText("Run");
+        currSimState = stopped;
+        break;
+    }
 }
 
 /**
@@ -242,22 +272,67 @@ void CourseModeWindow::on_belayerWeightValueSpinbox_valueChanged(double arg1)
     emit belayerWeightUpdatedSignal(arg1);
 }
 
-void CourseModeWindow::simulationCompleteSlot(){
-    enableSpinboxes();
-}
-
+/**
+ * @brief CourseModeWindow::disableSpinboxes
+ */
 void CourseModeWindow::disableSpinboxes(){
     ui->belayerWeightValueSpinbox->setReadOnly(true);
     ui->belayerHeightValueSpinbox->setReadOnly(true);
     ui->leaderWeightValueSpinbox->setReadOnly(true);
     ui->leaderHeightValueSpinbox->setReadOnly(true);
-    ui->runSimulationButton->setEnabled(false);
+    ui->boltHeightValueSpinbox->setReadOnly(true);
+    ui->ropeLengthValueSpinbox->setReadOnly(true);
 }
 
+/**
+ * @brief CourseModeWindow::enableSpinboxes
+ */
 void CourseModeWindow::enableSpinboxes(){
     ui->belayerWeightValueSpinbox->setReadOnly(false);
     ui->belayerHeightValueSpinbox->setReadOnly(false);
     ui->leaderWeightValueSpinbox->setReadOnly(false);
     ui->leaderHeightValueSpinbox->setReadOnly(false);
-    ui->runSimulationButton->setEnabled(true);
+    ui->boltHeightValueSpinbox->setReadOnly(false);
+    ui->ropeLengthValueSpinbox->setReadOnly(false);
 }
+
+/**
+ * @brief CourseModeWindow::resetUIElements
+ */
+void CourseModeWindow::resetUIElements(){
+    emit resetSimulationDataSignal();
+    ui->belayerHeightValueSpinbox->setValue(0);
+    ui->leaderHeightValueSpinbox->setValue(35);
+    ui->leaderWeightValueSpinbox->setValue(72);
+    ui->belayerWeightValueSpinbox->setValue(70);
+    ui->currentLeaderNewtonsOutputLabel->setText(QString::number(0));
+    ui->maxLeaderNewtonsOutputLabel->setText(QString::number(0));
+    ui->currentBelayerNewtonsOutputLabel->setText(QString::number(0));
+    ui->maxBelayerNewtonsOutputLabel->setText(QString::number(0));
+    ui->boltHeightValueSpinbox->setValue(30);
+    ui->ropeLengthValueSpinbox->setValue(35);
+    if(currSimState==running){
+        enableSpinboxes();
+        emit simulationStopSignal();
+        ui->runSimulationButton->setText("Run");
+        currSimState = stopped;
+    }
+}
+
+/**
+ * @brief CourseModeWindow::on_boltHeightValueSpinbox_valueChanged
+ * @param arg1
+ */
+void CourseModeWindow::on_boltHeightValueSpinbox_valueChanged(double arg1){
+    emit pulleyHeightUpdatedSignal(arg1);
+}
+
+/**
+ * @brief CourseModeWindow::on_ropeLengthValueSpinbox_valueChanged
+ * @param arg1
+ */
+void CourseModeWindow::on_ropeLengthValueSpinbox_valueChanged(double arg1)
+{
+    emit pulleyRopeLengthUpdatedSignal(arg1);
+}
+

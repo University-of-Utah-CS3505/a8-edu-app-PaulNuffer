@@ -6,7 +6,7 @@
 simulator::simulator(float climberX, float climberY, float climberWeight,
                      float belayerX, float belayerY, float belayerWeight,
                      float boltX,    float boltY,    float ropeLength)
-          : world(b2Vec2(0.0f, -10.0f))
+          : world(b2Vec2(0.0f, -10.0f)), pulleyX(boltX), pulleyY(boltY), pulleyRopeLength(ropeLength)
 {
     // Define the ground body.
     b2BodyDef groundBodyDef;
@@ -101,7 +101,29 @@ void simulator::createPulley(float x, float y, float length, b2Body* A, b2Body* 
     pulley.groundAnchorA.Set(x, y);
     pulley.groundAnchorB.Set(x, y);
 
-    world.CreateJoint(&pulley);
+    pulleyJoint = world.CreateJoint(&pulley);
+}
+
+/**
+ * @brief Creates a new pulley. Since we could not figure out a way to set the joint position after creation, this
+ * is our next best workaround.
+ * @param y - new height
+ */
+void simulator::setPulleyHeight(float y){
+    world.DestroyJoint(pulleyJoint);
+    pulleyY = y;
+    createPulley(pulleyX,pulleyY,pulleyRopeLength,climber,belayer);
+}
+
+/**
+ * @brief Creates a new pulley. Since we could not figure out a way to set the joint length after creation, this
+ * is our next best workaround.
+ * @param length - new length
+ */
+void simulator::setPulleyRopeLength(float length){
+    world.DestroyJoint(pulleyJoint);
+    pulleyRopeLength = length;
+    createPulley(pulleyX,pulleyY,pulleyRopeLength,climber,belayer);
 }
 
 /**
@@ -121,6 +143,22 @@ void simulator::setClimberHeight(float height){
 }
 
 /**
+ * @brief Sets the belayer's height to a new value.
+ * @param height
+ */
+void simulator::setBelayerX(float x){
+    belayer->SetTransform(b2Vec2(x, belayer->GetPosition().y), 0);
+}
+
+/**
+ * @brief Sets the climber's height to a new value.
+ * @param height
+ */
+void simulator::setClimberX(float x){
+    climber->SetTransform(b2Vec2(x, climber->GetPosition().y), 0);
+}
+
+/**
  * @return the current force of the belayer in newtons.
  */
 float simulator::getBelayerForce(){
@@ -131,7 +169,11 @@ float simulator::getBelayerForce(){
  * @return the current force of the climber in newtons.
  */
 float simulator::getClimberForce(){
-    return (climber->GetMass()*belayer->GetLinearVelocity().Length());
+    return (climber->GetMass()*climber->GetLinearVelocity().Length());
+}
+
+b2Vec2 simulator::getPulleyPos(){
+    return b2Vec2(pulleyX, pulleyY);
 }
 
 /**

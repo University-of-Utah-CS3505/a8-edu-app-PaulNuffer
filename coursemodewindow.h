@@ -19,16 +19,19 @@ public:
     void setupWindowAsSandboxMode();
 
 public slots:
-    void updateWindow(int belayerNewtons, int climberNewtons);
-    void simulationCompleteSlot();
+    void updateWindow(int currentClimberNewtons, int maxClimberNewtons, int currentBelayerNewtons, int maxBelayerNewtons);
 
 signals:
     void closeCourseModeWindowSignal();
-    void startSimulationTimerSignal();
+    void simulationStartSignal();
+    void simulationStopSignal();
     void climberHeightUpdatedSignal(float);
     void climberWeightUpdatedSignal(float);
     void belayerHeightUpdatedSignal(float);
     void belayerWeightUpdatedSignal(float);
+    void pulleyHeightUpdatedSignal(float);
+    void pulleyRopeLengthUpdatedSignal(float);
+    void resetSimulationDataSignal();
 
 private slots:
     void on_mainMenuButton_clicked();
@@ -40,14 +43,19 @@ private slots:
     void on_belayerHeightValueSpinbox_valueChanged(double arg1);
     void on_leaderWeightValueSpinbox_valueChanged(double arg1);
     void on_belayerWeightValueSpinbox_valueChanged(double arg1);
+    void on_boltHeightValueSpinbox_valueChanged(double arg1);
+    void on_ropeLengthValueSpinbox_valueChanged(double arg1);
 
 private:
     Ui::CourseModeWindow *ui;
+    SimulationViewWidget* simView;
+    enum SimState{stopped, running};
+    SimState currSimState = stopped;
     void applyStylesheets();
     void showChoiceResults();
     void disableSpinboxes();
     void enableSpinboxes();
-    SimulationViewWidget* simView;
+    void resetUIElements();
 };
 
 #endif // COURSEMODEWINDOW_H

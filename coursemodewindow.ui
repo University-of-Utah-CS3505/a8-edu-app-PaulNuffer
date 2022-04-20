@@ -103,7 +103,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>270</y>
+      <y>330</y>
       <width>171</width>
       <height>21</height>
      </rect>
@@ -115,14 +115,14 @@
      <enum>QFrame::Plain</enum>
     </property>
     <property name="text">
-     <string>Max Leader Newtons:</string>
+     <string>Max Climber Newtons:</string>
     </property>
    </widget>
    <widget class="QLabel" name="maxLeaderNewtonsOutputLabel">
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>270</y>
+      <y>330</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -144,7 +144,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>220</y>
+      <y>280</y>
       <width>171</width>
       <height>21</height>
      </rect>
@@ -156,14 +156,14 @@
      <enum>QFrame::Plain</enum>
     </property>
     <property name="text">
-     <string>Current Leader Newtons:</string>
+     <string>Current Climber Newtons:</string>
     </property>
    </widget>
    <widget class="QLabel" name="currentLeaderNewtonsOutputLabel">
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>220</y>
+      <y>280</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -185,7 +185,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>200</y>
+      <y>260</y>
       <width>261</width>
       <height>20</height>
      </rect>
@@ -201,7 +201,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>430</y>
+      <y>450</y>
       <width>261</width>
       <height>20</height>
      </rect>
@@ -358,6 +358,160 @@
      <string>m</string>
     </property>
    </widget>
+   <widget class="QLabel" name="currentBelayerNewtonsOutputLabel">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>380</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="lineWidth">
+     <number>2</number>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="maxBelayerNewtonsOutputLabel">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>430</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="lineWidth">
+     <number>2</number>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="currentBelayerNewtonsTextLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>380</y>
+      <width>171</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="text">
+     <string>Current Belayer Newtons:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="maxBelayerNewtonsTextLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>430</y>
+      <width>171</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="text">
+     <string>Max Belayer Newtons:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="boltHeightTextLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>190</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Bolt Height:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="boltLengthUnitsLabel">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>190</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="boltHeightValueSpinbox">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>190</y>
+      <width>67</width>
+      <height>29</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ropeLengthTextLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>230</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Rope Length</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ropeLengthUnitsLabel">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>230</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="ropeLengthValueSpinbox">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>230</y>
+      <width>67</width>
+      <height>29</height>
+     </rect>
+    </property>
+   </widget>
    <zorder>runSimulationButton</zorder>
    <zorder>leaderWeightTextLabel</zorder>
    <zorder>belayerWeightTextLabel</zorder>
@@ -380,6 +534,16 @@
    <zorder>belayerMassUnitsLabel</zorder>
    <zorder>climberLengthUnitsLabel</zorder>
    <zorder>belayerLengthUnitsLabel</zorder>
+   <zorder>currentBelayerNewtonsOutputLabel</zorder>
+   <zorder>maxBelayerNewtonsOutputLabel</zorder>
+   <zorder>currentBelayerNewtonsTextLabel</zorder>
+   <zorder>maxBelayerNewtonsTextLabel</zorder>
+   <zorder>boltHeightTextLabel</zorder>
+   <zorder>boltLengthUnitsLabel</zorder>
+   <zorder>boltHeightValueSpinbox</zorder>
+   <zorder>ropeLengthTextLabel</zorder>
+   <zorder>ropeLengthUnitsLabel</zorder>
+   <zorder>ropeLengthValueSpinbox</zorder>
   </widget>
   <widget class="QFrame" name="simulationFrame">
    <property name="geometry">
