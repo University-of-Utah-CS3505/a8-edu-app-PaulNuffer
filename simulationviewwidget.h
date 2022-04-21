@@ -7,6 +7,9 @@
 #include <QPainter>
 #include <QTimer>
 #include "simulator.h"
+#include <map>
+
+using std::map;
 
 class SimulationViewWidget : public QLabel
 {
@@ -45,6 +48,14 @@ private:
     WindowMode currentWindowMode;
     simulator sim;
     QTimer* worldUpdateTimer;
+
+    float ropeWidth;
+    float ropeHeight;
+
+    map<b2Body*, QLabel*> climberRopeBodyToLabel;
+    map<b2Body*, QLabel*> belayerRopeBodyToLabel;
+
+    void drawRope(vector<b2Body*>& rope,  map<b2Body*, QLabel*>& map);
 
 
     void drawWorld();

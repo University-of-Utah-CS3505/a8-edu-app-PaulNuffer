@@ -1,19 +1,42 @@
 #include "simulationviewwidget.h"
 #include <QPaintEvent>
 
+
 SimulationViewWidget::SimulationViewWidget(QWidget *parent)
     : QLabel{parent}, defaultX(5),
       sim(simulator(defaultX,35,72,defaultX+1,0,70,5.5,30,35))
 {
     worldUpdateTimer = new QTimer(this);
     connect(worldUpdateTimer, &QTimer::timeout, this, &SimulationViewWidget::updateWorld);
+
+    ropeWidth = 0.05, ropeHeight = 0.05;
+
+    QLabel* ropeLabel;
+
+    for (b2Body* ropeBody : sim.climberRope) {
+            // Add a new label representing the rope segments body
+            ropeLabel =  new QLabel(this);
+            ropeLabel->setGeometry((ropeBody->GetPosition().x)*xScaling, groundLevel - (ropeBody->GetPosition().y)*10, (ropeWidth)*xScaling, (ropeHeight)*xScaling);
+
+            // Add the body and label to the map
+            climberRopeBodyToLabel.emplace(ropeBody, ropeLabel);
+        }
+
+        for (b2Body* ropeBody : sim.belayerRope) {
+            // Add a new label representing the rope segments body
+            ropeLabel =  new QLabel(this);
+            ropeLabel->setGeometry((ropeBody->GetPosition().x)*xScaling, groundLevel - (ropeBody->GetPosition().y)*10, (ropeWidth)*xScaling, (ropeHeight)*xScaling);
+
+            // Add the body and label to the map
+            belayerRopeBodyToLabel.emplace(ropeBody, ropeLabel);
+        }
 }
 
 /**
  * @brief Public method to be called for updateing the simulator world state.
  */
 void SimulationViewWidget::updateWorld(){
-    sim.updateWorld();
+    sim.updateWorld(climberRopeBodyToLabel, belayerRopeBodyToLabel, this);
     int currentBelayerNewtons = (int)sim.getBelayerForce();
     int currentClimberNewtons = (int)sim.getClimberForce();
     if(currentClimberNewtons>maxClimberNewtons){
@@ -148,4 +171,24 @@ void SimulationViewWidget::drawWorld(){
     anchorPosition.y = anchorPosition.y*10;
     p.drawEllipse(anchorPosition.x, groundLevel-anchorPosition.y, 25 , 25);
     setPixmap(map);
+
+    drawRope(sim.climberRope, climberRopeBodyToLabel);
+    drawRope(sim.belayerRope, belayerRopeBodyToLabel);
+
+}
+
+void SimulationViewWidget::drawRope(vector<b2Body*>& rope,  map<b2Body*, QLabel*>& map) {
+
+    for (b2Body* ropeBody : rope) {
+        //if(map.count(ropeBody) != 0) {
+            // Add a new label representing the rope segments body
+            QLabel* ropeLabel =  map.at(ropeBody);
+            ropeLabel->setGeometry((ropeBody->GetPosition().x)*xScaling, groundLevel - (ropeBody->GetPosition().y)*10, (ropeWidth)*xScaling, (ropeHeight)*xScaling);
+
+            // Create a new image for the label
+            QImage imgFill = QImage((ropeWidth)*xScaling, groundLevel - (ropeHeight)*10, QImage::Format_ARGB32);
+            imgFill.fill(QColor(200,0,175,255));
+            ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
+        //}
+    }
 }
