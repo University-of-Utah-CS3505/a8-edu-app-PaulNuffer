@@ -17,7 +17,7 @@ public:
               float boltX,    float boltY,    float ropeLength);
     ~simulator();
 
-    void updateWorld(map<b2Body*, QLabel*>& climberBodyRopeToLabel, map<b2Body*, QLabel*>& belayerRopeBodyToLabel, QWidget* viewAddress);
+    void updateWorld(map<b2Body*, QLabel*>* climberBodyRopeToLabel, map<b2Body*, QLabel*>* belayerRopeBodyToLabel, QWidget* viewAddress);
     b2Vec2 getClimberPos();
     b2Vec2 getBelayerPos();
     b2Vec2 getPulleyPos();
@@ -50,8 +50,8 @@ public:
     const float SEGMENT_DENSITY = 1.5;
 
     //Rope code??
-    float ropeWidth;
-    float ropeHeight;
+    float ropeWidth = 0.5;
+    float ropeHeight = 0.5;
 
     float pulleyX;
     float pulleyY;
@@ -60,11 +60,11 @@ public:
     vector<b2Body*> connectRopeTo(b2Body* A, b2Body* B);
     vector<b2Body*> createRope(int numSegments, b2Vec2 vecA, b2Vec2 vecB);
 
-    void updateRopes(map<b2Body*, QLabel*>& climberBodyRopeToLabel, map<b2Body*, QLabel*>& belayerRopeBodyToLabel, QWidget* viewAddress);
+    void updateRopes(map<b2Body*, QLabel*>* climberBodyRopeToLabel, map<b2Body*, QLabel*>* belayerRopeBodyToLabel, QWidget* viewAddress);
 
-    int addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map, QWidget* viewAddress);
+    int addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>* map, QWidget* viewAddress);
 
-    void removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map, int numSegmentsToRemove, QWidget* viewAddress);
+    void removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>* map, int numSegmentsToRemove, QWidget* viewAddress);
 
 };
 

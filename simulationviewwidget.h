@@ -44,7 +44,8 @@ private:
     int updateDelay = 17;
     int simulationDuration = 5000;
     int groundLevel = 600;
-    int xScaling = 30;
+    int coordinateScaling = 10;
+    int xOffset = 150;
     WindowMode currentWindowMode;
     simulator sim;
     QTimer* worldUpdateTimer;

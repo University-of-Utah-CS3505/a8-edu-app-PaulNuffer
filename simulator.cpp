@@ -83,7 +83,7 @@ simulator::~simulator(){
 
 }
 
-void simulator::updateWorld(map<b2Body*, QLabel*>& climberBodyRopeToLabel, map<b2Body*, QLabel*>& belayerRopeBodyToLabel, QWidget* viewAddress) {
+void simulator::updateWorld(map<b2Body*, QLabel*>* climberBodyRopeToLabel, map<b2Body*, QLabel*>* belayerRopeBodyToLabel, QWidget* viewAddress) {
     // It is generally best to keep the time step and iterations fixed.
     world.Step(1.0/60.0, 6, 2);
     updateRopes(climberBodyRopeToLabel, belayerRopeBodyToLabel, viewAddress);
@@ -379,7 +379,7 @@ vector<b2Body*> simulator::createRope(int numSegments, b2Vec2 vecA, b2Vec2 vecB)
     return bodies;
 }
 
-void simulator::updateRopes(map<b2Body*, QLabel*>& climberRopeBodyToLabel, map<b2Body*, QLabel*>& belayerRopeBodyToLabel, QWidget* viewAddress) {
+void simulator::updateRopes(map<b2Body*, QLabel*>* climberRopeBodyToLabel, map<b2Body*, QLabel*>* belayerRopeBodyToLabel, QWidget* viewAddress) {
     // Get positions
     float boltX = bolt->GetPosition().x;
     float boltY = bolt->GetPosition().y;
@@ -404,18 +404,18 @@ void simulator::updateRopes(map<b2Body*, QLabel*>& climberRopeBodyToLabel, map<b
     }
 }
 
-int simulator::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map, QWidget* viewAddress) {
+int simulator::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>* map, QWidget* viewAddress) {
 
     // Delete the end of the rope, which is connected to the climber
     b2Body* endRope = rope.back();
     rope.pop_back();
 
     // Fill the deleted label clear and delete it
-    QLabel* ropeLabel =  map.at(endRope);
+    QLabel* ropeLabel =  map->at(endRope);
     QImage imgFill = QImage(15*(ropeWidth), 600-(ropeHeight)*10, QImage::Format_ARGB32);
     imgFill.fill(QColor(0,0,0,0));
     ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
-    map.erase(endRope);
+    map->erase(endRope);
 
     // Destroy the rope segment
     world.DestroyBody(endRope);
@@ -461,12 +461,12 @@ int simulator::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLa
         ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
 
         // Add the body and label to the map
-        map.emplace(ropeBody, ropeLabel);
+        map->emplace(ropeBody, ropeLabel);
     }
     return ropeBodiesToAdd.size() - 2;
 }
 
-void simulator::removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>& map, int numSegmentsToRemove, QWidget* viewAddress) {
+void simulator::removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLabel*>* map, int numSegmentsToRemove, QWidget* viewAddress) {
     if(numSegmentsToRemove <= 0)
         return;
     // Fully delete all of the extra rope bodies
@@ -477,11 +477,11 @@ void simulator::removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*,
         rope.pop_back();
 
         // Clear the label and delete it
-        QLabel* ropeLabel =  map.at(endRope);
+        QLabel* ropeLabel =  map->at(endRope);
         QImage imgFill = QImage(15*(ropeWidth), 600-(ropeHeight)*10, QImage::Format_ARGB32);
         imgFill.fill(QColor(0,0,0,0));
         ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
-        map.erase(endRope);
+        map->erase(endRope);
 
         // Destroy and remove the segment from the world
         world.DestroyBody(endRope);
@@ -532,6 +532,6 @@ void simulator::removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*,
     ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
 
     // Add the body and label to the map
-    map.emplace(newRopeBody, ropeLabel);
+    map->emplace(newRopeBody, ropeLabel);
     ropeToAdd.clear();
 }
