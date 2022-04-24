@@ -35,10 +35,6 @@ public:
     void setPulleyHeight(float y);
     void setPulleyRopeLength(float length);
 
-    //Rope code??
-    vector<b2Body*> createRope(int length);
-    vector<b2Body*> ropeBodies;
-
     b2World world;
     b2Body* climber;
     b2Body* belayer;
@@ -47,11 +43,10 @@ public:
     b2Body* bolt;
     vector<b2Body*> climberRope;
     vector<b2Body*> belayerRope;
-    const float SEGMENT_DENSITY = 1.5;
 
-    //Rope code??
-    float ropeWidth = 0.5;
-    float ropeHeight = 0.5;
+    const float SEGMENT_DENSITY = 0.2;
+    const float ROPE_WIDTH = 0.05;
+    const float ROPE_HEIGHT = 0.05;
 
     float pulleyX;
     float pulleyY;

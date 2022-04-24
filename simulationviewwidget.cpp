@@ -10,6 +10,7 @@ SimulationViewWidget::SimulationViewWidget(QWidget *parent)
     connect(worldUpdateTimer, &QTimer::timeout, this, &SimulationViewWidget::updateWorld);
 
     ropeWidth = 0.5, ropeHeight = 0.5;
+    //ropeWidth = sim.ROPE_WIDTH, ropeHeight = sim.ROPE_HEIGHT;
 
     QLabel* ropeLabel;
 
