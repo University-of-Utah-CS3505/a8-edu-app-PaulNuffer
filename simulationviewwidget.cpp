@@ -70,6 +70,7 @@ b2Vec2 SimulationViewWidget::getLeaderPosition(){
  * @brief Starts running the simulation for the set duration.
  */
 void SimulationViewWidget::simulationStartSlot(){
+    resetSimulationDataSlot();
     worldUpdateTimer->start(updateDelay);
 }
 
@@ -77,7 +78,6 @@ void SimulationViewWidget::simulationStartSlot(){
  * @brief Stops the simulation update timer, ending the simulation.
  */
 void SimulationViewWidget::simulationStopSlot(){
-    resetSimulationDataSlot();
     worldUpdateTimer->stop();
 }
 
