@@ -8,6 +8,7 @@
 #include <QTimer>
 #include "simulator.h"
 #include <map>
+#include <QPixmap>
 
 using std::map;
 

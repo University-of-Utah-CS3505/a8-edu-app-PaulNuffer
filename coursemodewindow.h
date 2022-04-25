@@ -56,6 +56,7 @@ private:
     void disableSpinboxes();
     void enableSpinboxes();
     void resetUIElements();
+    float calculatePulleyRopeLength();
 };
 
 #endif // COURSEMODEWINDOW_H

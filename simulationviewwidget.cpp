@@ -15,22 +15,22 @@ SimulationViewWidget::SimulationViewWidget(QWidget *parent)
     QLabel* ropeLabel;
 
     for (b2Body* ropeBody : sim.climberRope) {
-            // Add a new label representing the rope segments body
-            ropeLabel =  new QLabel(this);
-            ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
+        // Add a new label representing the rope segments body
+        ropeLabel =  new QLabel(this);
+        ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
 
-            // Add the body and label to the map
-            climberRopeBodyToLabel.emplace(ropeBody, ropeLabel);
-        }
+        // Add the body and label to the map
+        climberRopeBodyToLabel.emplace(ropeBody, ropeLabel);
+    }
 
-        for (b2Body* ropeBody : sim.belayerRope) {
-            // Add a new label representing the rope segments body
-            ropeLabel =  new QLabel(this);
-            ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
+    for (b2Body* ropeBody : sim.belayerRope) {
+        // Add a new label representing the rope segments body
+        ropeLabel =  new QLabel(this);
+        ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
 
-            // Add the body and label to the map
-            belayerRopeBodyToLabel.emplace(ropeBody, ropeLabel);
-        }
+        // Add the body and label to the map
+        belayerRopeBodyToLabel.emplace(ropeBody, ropeLabel);
+    }
 }
 
 /**
@@ -77,6 +77,7 @@ void SimulationViewWidget::simulationStartSlot(){
  * @brief Stops the simulation update timer, ending the simulation.
  */
 void SimulationViewWidget::simulationStopSlot(){
+    resetSimulationDataSlot();
     worldUpdateTimer->stop();
 }
 
@@ -140,14 +141,49 @@ void SimulationViewWidget::pulleyRopeLengthUpdatedSlot(float length){
 void SimulationViewWidget::resetSimulationDataSlot(){
     worldUpdateTimer->stop();
     simRunning = false;
-    climberHeightUpdatedSlot(35);
+    climberHeightUpdatedSlot(sim.pulleyRopeLength);
     climberWeightUpdatedSlot(72);
     sim.setClimberX(defaultX);
     belayerHeightUpdatedSlot(0);
     belayerWeightUpdatedSlot(70);
     sim.setBelayerX(defaultX+1);
-    pulleyHeightUpdatedSlot(30);
-    pulleyRopeLengthUpdatedSlot(35);
+    //pulleyHeightUpdatedSlot(30);
+    //pulleyRopeLengthUpdatedSlot(35);
+
+//    for (auto map : climberRopeBodyToLabel) {
+//        map.second->~QLabel();
+//    }
+
+//    for (auto map : belayerRopeBodyToLabel) {
+//        map.second->~QLabel();
+//    }
+
+//    climberRopeBodyToLabel.clear();
+//    belayerRopeBodyToLabel.clear();
+//    QLabel* ropeLabel;
+//    for (b2Body* ropeBody : sim.climberRope) {
+//        // Add a new label representing the rope segments body
+//        ropeLabel =  new QLabel(this);
+//        ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
+
+//        // Add the body and label to the map
+//        climberRopeBodyToLabel.emplace(ropeBody, ropeLabel);
+//    }
+
+//    for (b2Body* ropeBody : sim.belayerRope) {
+//        // Add a new label representing the rope segments body
+//        ropeLabel =  new QLabel(this);
+//        ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
+
+//        // Add the body and label to the map
+//        belayerRopeBodyToLabel.emplace(ropeBody, ropeLabel);
+//    }
+
+    if (sim.hasPulley) {
+        sim.world.DestroyJoint(sim.pulleyJoint);
+    }
+    sim.hasPulley = false;
+
     drawWorld();
 }
 
@@ -166,7 +202,8 @@ void SimulationViewWidget::drawWorld(){
     belayerPosition.x = belayerPosition.x*coordinateScaling;
     belayerPosition.y = belayerPosition.y*coordinateScaling;
     p.drawImage(QPoint(belayerPosition.x+xOffset, groundLevel-belayerPosition.y), QImage(":/Resources/belayer.png"));
-    b2Vec2 anchorPosition(sim.getPulleyPos());
+    //b2Vec2 anchorPosition(sim.getPulleyPos());
+    b2Vec2 anchorPosition = sim.bolt->GetPosition();
     p.setPen(QPen(QColor(0,0,255), 3));
     anchorPosition.x = anchorPosition.x*coordinateScaling;
     anchorPosition.y = anchorPosition.y*coordinateScaling;

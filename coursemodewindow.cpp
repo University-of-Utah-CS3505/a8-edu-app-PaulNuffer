@@ -127,12 +127,16 @@ void CourseModeWindow::on_mainMenuButton_clicked()
  * @brief Updates window widgets, paint objects, and alerts the simulator widget to update its simulation world.
  */
 void CourseModeWindow::updateWindow(int currentClimberNewtons, int maxClimberNewtons, int currentBelayerNewtons, int maxBelayerNewtons){
+    ui->belayerHeightValueSpinbox->blockSignals(true);
+    ui->leaderHeightValueSpinbox->blockSignals(true);
     ui->belayerHeightValueSpinbox->setValue(simView->getBelayerPosition().y);
     ui->leaderHeightValueSpinbox->setValue(simView->getLeaderPosition().y);
     ui->currentLeaderNewtonsOutputLabel->setText(QString::number(currentClimberNewtons));
     ui->maxLeaderNewtonsOutputLabel->setText(QString::number(maxClimberNewtons));
     ui->currentBelayerNewtonsOutputLabel->setText(QString::number(currentBelayerNewtons));
     ui->maxBelayerNewtonsOutputLabel->setText(QString::number(maxBelayerNewtons));
+    ui->belayerHeightValueSpinbox->blockSignals(false);
+    ui->leaderHeightValueSpinbox->blockSignals(false);
 }
 
 /**
@@ -243,6 +247,9 @@ void CourseModeWindow::on_runSimulationButton_clicked()
 void CourseModeWindow::on_leaderHeightValueSpinbox_valueChanged(double arg1)
 {
     emit climberHeightUpdatedSignal(arg1);
+    ui->ropeLengthValueSpinbox->setValue(calculatePulleyRopeLength());
+    ui->ropeLengthValueSpinbox->blockSignals(true);
+    ui->ropeLengthValueSpinbox->blockSignals(false);
 }
 
 /**
@@ -252,6 +259,9 @@ void CourseModeWindow::on_leaderHeightValueSpinbox_valueChanged(double arg1)
 void CourseModeWindow::on_belayerHeightValueSpinbox_valueChanged(double arg1)
 {
     emit belayerHeightUpdatedSignal(arg1);
+    ui->ropeLengthValueSpinbox->setValue(calculatePulleyRopeLength());
+    ui->ropeLengthValueSpinbox->blockSignals(true);
+    ui->ropeLengthValueSpinbox->blockSignals(false);
 }
 
 /**
@@ -309,6 +319,9 @@ void CourseModeWindow::resetUIElements(){
     ui->maxLeaderNewtonsOutputLabel->setText(QString::number(0));
     ui->currentBelayerNewtonsOutputLabel->setText(QString::number(0));
     ui->maxBelayerNewtonsOutputLabel->setText(QString::number(0));
+    // ADDED
+    ui->boltHeightValueSpinbox->blockSignals(true);
+    ui->ropeLengthValueSpinbox->blockSignals(true);
     ui->boltHeightValueSpinbox->setValue(30);
     ui->ropeLengthValueSpinbox->setValue(35);
     if(currSimState==running){
@@ -336,3 +349,14 @@ void CourseModeWindow::on_ropeLengthValueSpinbox_valueChanged(double arg1)
     emit pulleyRopeLengthUpdatedSignal(arg1);
 }
 
+/**
+ * @brief CourseModeWindow::calculatePulleyRopeLength
+ */
+float CourseModeWindow::calculatePulleyRopeLength(){
+    float heightA = ui->belayerHeightValueSpinbox->value();
+    float heightB = ui->leaderHeightValueSpinbox->value();
+    float boltHeight = ui->boltHeightValueSpinbox->value();
+    float lengthA = abs(boltHeight - heightA);
+    float lenghtB = abs(boltHeight - heightB);
+    return lengthA + lenghtB;
+}

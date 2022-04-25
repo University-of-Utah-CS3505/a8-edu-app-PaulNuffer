@@ -51,6 +51,7 @@ public:
     float pulleyX;
     float pulleyY;
     float pulleyRopeLength;
+    bool hasPulley;
 
     vector<b2Body*> connectRopeTo(b2Body* A, b2Body* B);
     vector<b2Body*> createRope(int numSegments, b2Vec2 vecA, b2Vec2 vecB);

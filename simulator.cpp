@@ -63,11 +63,10 @@ simulator::simulator(float climberX, float climberY, float climberWeight,
     // Add the shape to the body.
     climber->CreateFixture(&climberFixtureDef);
     belayer->CreateFixture(&belayerFixtureDef);
-    climber->GetFixtureList()->SetSensor(true);
 
 
     // Create a pulley
-    createPulley(boltX, boltY, ropeLength, climber, belayer);
+    // createPulley(boltX, boltY, ropeLength, climber, belayer);
 
     b2BodyDef boltDef;
     boltDef.position.Set(boltX, boltY);
@@ -80,16 +79,30 @@ simulator::simulator(float climberX, float climberY, float climberWeight,
 
     climberRope = connectRopeTo(bolt, climber);
     belayerRope = connectRopeTo(bolt, belayer);
+
+    hasPulley = false;
 }
 
 simulator::~simulator(){
-
 }
 
 void simulator::updateWorld(map<b2Body*, QLabel*>* climberBodyRopeToLabel, map<b2Body*, QLabel*>* belayerRopeBodyToLabel, QWidget* viewAddress) {
     // It is generally best to keep the time step and iterations fixed.
     world.Step(1.0/60.0, 6, 2);
-    updateRopes(climberBodyRopeToLabel, belayerRopeBodyToLabel, viewAddress);
+    if (climber->GetPosition().y < bolt->GetPosition().y) {
+        updateRopes(climberBodyRopeToLabel, belayerRopeBodyToLabel, viewAddress);
+    }
+
+    float climberFromBoltDistance = pow((pow(climber->GetPosition().x - bolt->GetPosition().x, 2),
+                                         pow(climber->GetPosition().y - bolt->GetPosition().y, 2)), 0.5);
+    float belayerFromBoltDistance = pow((pow(belayer->GetPosition().x - bolt->GetPosition().x, 2),
+                                         pow(belayer->GetPosition().y - bolt->GetPosition().y, 2)), 0.5);
+
+    if(climberFromBoltDistance >= pulleyRopeLength - belayerFromBoltDistance && !hasPulley) {
+        // Create a pulley
+        createPulley(bolt->GetPosition().x, bolt->GetPosition().y, pulleyRopeLength, climber, belayer);
+        hasPulley = true;
+    }
 }
 
 b2Vec2 simulator::getClimberPos() {
@@ -104,8 +117,8 @@ b2Vec2 simulator::getBelayerPos() {
 // Connects A to one end, B to the other
 void simulator::createPulley(float x, float y, float length, b2Body* A, b2Body* B) {
     b2PulleyJointDef pulley = b2PulleyJointDef();
-    A->SetLinearDamping(1.0f);
-    B->SetLinearDamping(1.0f);
+    A->SetLinearDamping(0.5f);
+    B->SetLinearDamping(0.5f);
     pulley.bodyA = A;
     pulley.bodyB = B;
     pulley.collideConnected = true;
@@ -125,11 +138,17 @@ void simulator::createPulley(float x, float y, float length, b2Body* A, b2Body* 
  * @param y - new height
  */
 void simulator::setPulleyHeight(float y){
-    world.DestroyJoint(pulleyJoint);
-    pulleyY = y;
-    createPulley(pulleyX,pulleyY,pulleyRopeLength,climber,belayer);
-    b2Vec2 newBoltPos(pulleyX, pulleyY);
-    bolt->SetTransform(newBoltPos, 0);
+//    if (hasPulley) {
+//        world.DestroyJoint(pulleyJoint);
+//        pulleyY = y;
+//        createPulley(pulleyX,pulleyY,pulleyRopeLength,climber,belayer);
+//        b2Vec2 newBoltPos(pulleyX, pulleyY);
+//        bolt->SetTransform(newBoltPos, 0);
+//    }
+//    else {
+//        pulleyRopeLength = y;
+//    }
+    pulleyRopeLength = y;
 }
 
 /**
@@ -138,9 +157,10 @@ void simulator::setPulleyHeight(float y){
  * @param length - new length
  */
 void simulator::setPulleyRopeLength(float length){
-    world.DestroyJoint(pulleyJoint);
+    //world.DestroyJoint(pulleyJoint);
     pulleyRopeLength = length;
-    createPulley(pulleyX,pulleyY,pulleyRopeLength,climber,belayer);
+    //createPulley(pulleyX,pulleyY,pulleyRopeLength,climber,belayer);
+    //updateRopes(climberRopeBodyToLabel, climberRopeBodyToLabel, viewAddress);
 }
 
 /**
@@ -364,12 +384,7 @@ int simulator::addSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*, QLa
     // Delete the end of the rope, which is connected to the climber
     b2Body* endRope = rope.back();
     rope.pop_back();
-
-    // Fill the deleted label clear and delete it
-    QLabel* ropeLabel =  map->at(endRope);
-    QImage imgFill = QImage(15*(ROPE_WIDTH), 600-(ROPE_HEIGHT)*10, QImage::Format_ARGB32);
-    imgFill.fill(QColor(0,0,0,0));
-    ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
+    map->at(endRope)->~QLabel();
     map->erase(endRope);
 
     // Destroy the rope segment
@@ -432,10 +447,7 @@ void simulator::removeSegments(b2Body* body, vector<b2Body*>& rope, map<b2Body*,
         rope.pop_back();
 
         // Clear the label and delete it
-        QLabel* ropeLabel =  map->at(endRope);
-        QImage imgFill = QImage(15*(ROPE_WIDTH), 600-(ROPE_HEIGHT)*10, QImage::Format_ARGB32);
-        imgFill.fill(QColor(0,0,0,0));
-        ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
+        map->at(endRope)->~QLabel();
         map->erase(endRope);
 
         // Destroy and remove the segment from the world
