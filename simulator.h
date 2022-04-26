@@ -44,7 +44,7 @@ public:
     vector<b2Body*> climberRope;
     vector<b2Body*> belayerRope;
 
-    const float SEGMENT_DENSITY = 0.2;
+    const float SEGMENT_DENSITY = 0.3;
     const float ROPE_WIDTH = 0.05;
     const float ROPE_HEIGHT = 0.05;
 

@@ -62,6 +62,53 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
             &CourseModeWindow::pulleyRopeLengthUpdatedSignal,
             simView,
             &SimulationViewWidget::pulleyRopeLengthUpdatedSlot);
+
+    level_t obj;
+    //stage 1
+        obj.climberHeight=b2Vec2(5, 35);
+        obj.climberWeight=72;
+        obj.belayerHeight=b2Vec2(6, 0);
+        obj.belayerWeight=70;
+        obj.boltHeight=b2Vec2(5.5, 30);
+        obj.correctAnswer=level_t::jump;
+        obj.explanation="Reason stage 1";
+    courseStages.push_back(obj);
+    //stage 2
+        obj.climberHeight=b2Vec2(5, 50);
+        obj.climberWeight=72;
+        obj.belayerHeight=b2Vec2(6, 0);
+        obj.belayerWeight=70;
+        obj.boltHeight=b2Vec2(5.5, 30);
+        obj.correctAnswer=level_t::stay;
+        obj.explanation="Reason stage 2";
+    courseStages.push_back(obj);
+    //stage 3
+        obj.climberHeight=b2Vec2(5, 35);
+        obj.climberWeight=200;
+        obj.belayerHeight=b2Vec2(6, 0);
+        obj.belayerWeight=70;
+        obj.boltHeight=b2Vec2(5.5, 30);
+        obj.correctAnswer=level_t::sit;
+        obj.explanation="Reason stage 3";
+    courseStages.push_back(obj);
+    //stage 4
+        obj.climberHeight=b2Vec2(5, 35);
+        obj.climberWeight=25;
+        obj.belayerHeight=b2Vec2(6, 0);
+        obj.belayerWeight=99;
+        obj.boltHeight=b2Vec2(5.5, 30);
+        obj.correctAnswer=level_t::jump;
+        obj.explanation="Reason stage 4";
+    courseStages.push_back(obj);
+    //stage 5
+        obj.climberHeight=b2Vec2(5, 10);
+        obj.climberWeight=72;
+        obj.belayerHeight=b2Vec2(6, 0);
+        obj.belayerWeight=70;
+        obj.boltHeight=b2Vec2(5.5, 6);
+        obj.correctAnswer=level_t::jump;
+        obj.explanation="Reason stage 5";
+    courseStages.push_back(obj);
 }
 
 CourseModeWindow::~CourseModeWindow()
@@ -74,12 +121,12 @@ CourseModeWindow::~CourseModeWindow()
  * @brief Sets the course window to display all widget elements necessary for course mode.
  */
 void CourseModeWindow::setupWindowAsCourseMode(){
-    ui->belayerWeightValueSpinbox->setReadOnly(true);
-    ui->belayerHeightValueSpinbox->setReadOnly(true);
-    ui->leaderWeightValueSpinbox->setReadOnly(true);
-    ui->leaderHeightValueSpinbox->setReadOnly(true);
-    ui->boltHeightValueSpinbox->setReadOnly(true);
-    ui->ropeLengthValueSpinbox->setReadOnly(true);
+    ui->belayerWeightValueSpinbox->setEnabled(false);
+    ui->belayerHeightValueSpinbox->setEnabled(false);
+    ui->leaderWeightValueSpinbox->setEnabled(false);
+    ui->leaderHeightValueSpinbox->setEnabled(false);
+    ui->boltHeightValueSpinbox->setEnabled(false);
+    ui->ropeLengthValueSpinbox->setEnabled(false);
     ui->runSimulationButton->setEnabled(false);
     ui->runSimulationButton->hide();
     ui->jumpButton->setEnabled(true);
@@ -90,18 +137,20 @@ void CourseModeWindow::setupWindowAsCourseMode(){
     ui->stayButton->show();
     resetUIElements();
     show();
+    currentCourseStage = 0;
+    readStageData();
 }
 
 /**
  * @brief Sets the course window to display all widget elements necessary for sandbox mode.
  */
 void CourseModeWindow::setupWindowAsSandboxMode(){
-    ui->belayerWeightValueSpinbox->setReadOnly(false);
-    ui->belayerHeightValueSpinbox->setReadOnly(false);
-    ui->leaderWeightValueSpinbox->setReadOnly(false);
-    ui->leaderHeightValueSpinbox->setReadOnly(false);
-    ui->boltHeightValueSpinbox->setReadOnly(false);
-    ui->ropeLengthValueSpinbox->setReadOnly(false);
+    ui->belayerWeightValueSpinbox->setEnabled(true);
+    ui->belayerHeightValueSpinbox->setEnabled(true);
+    ui->leaderWeightValueSpinbox->setEnabled(true);
+    ui->leaderHeightValueSpinbox->setEnabled(true);
+    ui->boltHeightValueSpinbox->setEnabled(true);
+    ui->ropeLengthValueSpinbox->setEnabled(true);
     ui->runSimulationButton->setEnabled(true);
     ui->runSimulationButton->show();
     ui->jumpButton->setEnabled(false);
@@ -139,13 +188,35 @@ void CourseModeWindow::updateWindow(int currentClimberNewtons, int maxClimberNew
     ui->leaderHeightValueSpinbox->blockSignals(false);
 }
 
-/**
- * @brief CourseModeWindow::showChoiceResults
- */
 void CourseModeWindow::showChoiceResults(){
+    emit simulationStopSignal();
+
     QMessageBox choiceResults;
-    choiceResults.setText("In this situation, you should have:");
-    choiceResults.exec();
+
+    if(playerChoice == courseStages.at(currentCourseStage).correctAnswer){
+        choiceResults.setText("Correct. \n" + courseStages.at(currentCourseStage).explanation);
+        choiceResults.exec();
+    }
+    else {
+        choiceResults.setText("Incorrect. \n"  + courseStages.at(currentCourseStage).explanation);
+        choiceResults.exec();
+    }
+
+    ui->jumpButton->setEnabled(true);
+    ui->sitButton->setEnabled(true);
+    ui->stayButton->setEnabled(true);
+//    emit simulationStartSignal();
+    if(currentCourseStage < courseStages.length()-1){
+        currentCourseStage = currentCourseStage + 1;
+        readStageData();
+    }
+    else{
+        QMessageBox endScreen;
+        endScreen.setText("You win. Woot");
+        endScreen.exec();
+        hide();
+        emit closeCourseModeWindowSignal();
+    }
 }
 
 /**
@@ -199,24 +270,51 @@ void CourseModeWindow::applyStylesheets(){
                                               "}"));
 }
 
+void CourseModeWindow::readStageData(){
+    ui->belayerHeightValueSpinbox->setValue(courseStages.at(currentCourseStage).belayerHeight.y);
+    ui->belayerWeightValueSpinbox->setValue(courseStages.at(currentCourseStage).belayerWeight);
+    ui->leaderHeightValueSpinbox->setValue(courseStages.at(currentCourseStage).climberHeight.y);
+    ui->leaderWeightValueSpinbox->setValue(courseStages.at(currentCourseStage).climberWeight);
+    ui->boltHeightValueSpinbox->setValue(courseStages.at(currentCourseStage).boltHeight.y);
+    ui->ropeLengthValueSpinbox->setValue(calculatePulleyRopeLength());
+    ui->maxLeaderNewtonsOutputLabel->setText("0");
+    ui->currentLeaderNewtonsOutputLabel->setText("0");
+    simView->maxClimberNewtons=0;
+    ui->maxBelayerNewtonsOutputLabel->setText("0");
+    ui->currentBelayerNewtonsOutputLabel->setText("0");
+    simView->maxBelayerNewtons=0;
+}
+
 void CourseModeWindow::on_jumpButton_clicked()
 {
-    showChoiceResults();
+    ui->jumpButton->setEnabled(false);
+    ui->sitButton->setEnabled(false);
+    ui->stayButton->setEnabled(false);
     emit simulationStartSignal();
+    playerChoice = level_t::Answer::jump;
+    QTimer::singleShot(5000, Qt::PreciseTimer, this, &CourseModeWindow::showChoiceResults);
 }
 
 
 void CourseModeWindow::on_sitButton_clicked()
 {
-    showChoiceResults();
+    ui->jumpButton->setEnabled(false);
+    ui->sitButton->setEnabled(false);
+    ui->stayButton->setEnabled(false);
     emit simulationStartSignal();
+    playerChoice = level_t::Answer::sit;
+    QTimer::singleShot(5000, Qt::PreciseTimer, this, &CourseModeWindow::showChoiceResults);
 }
 
 
 void CourseModeWindow::on_stayButton_clicked()
 {
-    showChoiceResults();
+    ui->jumpButton->setEnabled(false);
+    ui->sitButton->setEnabled(false);
+    ui->stayButton->setEnabled(false);
     emit simulationStartSignal();
+    playerChoice = level_t::Answer::stay;
+    QTimer::singleShot(5000, Qt::PreciseTimer, this, &CourseModeWindow::showChoiceResults);
 }
 
 /**
@@ -248,8 +346,6 @@ void CourseModeWindow::on_leaderHeightValueSpinbox_valueChanged(double arg1)
 {
     emit climberHeightUpdatedSignal(arg1);
     ui->ropeLengthValueSpinbox->setValue(calculatePulleyRopeLength());
-    ui->ropeLengthValueSpinbox->blockSignals(true);
-    ui->ropeLengthValueSpinbox->blockSignals(false);
 }
 
 /**
@@ -260,8 +356,6 @@ void CourseModeWindow::on_belayerHeightValueSpinbox_valueChanged(double arg1)
 {
     emit belayerHeightUpdatedSignal(arg1);
     ui->ropeLengthValueSpinbox->setValue(calculatePulleyRopeLength());
-    ui->ropeLengthValueSpinbox->blockSignals(true);
-    ui->ropeLengthValueSpinbox->blockSignals(false);
 }
 
 /**
@@ -324,6 +418,8 @@ void CourseModeWindow::resetUIElements(){
     ui->ropeLengthValueSpinbox->blockSignals(true);
     ui->boltHeightValueSpinbox->setValue(30);
     ui->ropeLengthValueSpinbox->setValue(35);
+    ui->boltHeightValueSpinbox->blockSignals(false);
+    ui->ropeLengthValueSpinbox->blockSignals(false);
     if(currSimState==running){
         enableSpinboxes();
         emit simulationStopSignal();

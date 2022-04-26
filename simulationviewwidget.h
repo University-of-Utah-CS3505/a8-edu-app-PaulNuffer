@@ -19,6 +19,8 @@ public:
     explicit SimulationViewWidget(QWidget *parent = nullptr);
     b2Vec2 getLeaderPosition();
     b2Vec2 getBelayerPosition();
+    int maxClimberNewtons=0;
+    int maxBelayerNewtons=0;
     void updateWorld();
 
 public slots:
@@ -40,8 +42,6 @@ private slots:
 private:
     enum WindowMode{course, sandbox};
     float defaultX;
-    int maxClimberNewtons=0;
-    int maxBelayerNewtons=0;
     int updateDelay = 17;
     int simulationDuration = 5000;
     int groundLevel = 600;

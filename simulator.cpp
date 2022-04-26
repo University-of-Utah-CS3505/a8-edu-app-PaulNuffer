@@ -138,17 +138,8 @@ void simulator::createPulley(float x, float y, float length, b2Body* A, b2Body* 
  * @param y - new height
  */
 void simulator::setPulleyHeight(float y){
-//    if (hasPulley) {
-//        world.DestroyJoint(pulleyJoint);
-//        pulleyY = y;
-//        createPulley(pulleyX,pulleyY,pulleyRopeLength,climber,belayer);
-//        b2Vec2 newBoltPos(pulleyX, pulleyY);
-//        bolt->SetTransform(newBoltPos, 0);
-//    }
-//    else {
-//        pulleyRopeLength = y;
-//    }
-    pulleyRopeLength = y;
+        b2Vec2 newBoltPos(pulleyX, y);
+        bolt->SetTransform(newBoltPos, 0);
 }
 
 /**
@@ -157,10 +148,7 @@ void simulator::setPulleyHeight(float y){
  * @param length - new length
  */
 void simulator::setPulleyRopeLength(float length){
-    //world.DestroyJoint(pulleyJoint);
     pulleyRopeLength = length;
-    //createPulley(pulleyX,pulleyY,pulleyRopeLength,climber,belayer);
-    //updateRopes(climberRopeBodyToLabel, climberRopeBodyToLabel, viewAddress);
 }
 
 /**

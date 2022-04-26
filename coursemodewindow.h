@@ -4,6 +4,17 @@
 #include <QWidget>
 #include "simulationviewwidget.h"
 
+struct level_t{
+    b2Vec2 climberHeight;
+    float climberWeight;
+    b2Vec2 belayerHeight;
+    float belayerWeight;
+    b2Vec2 boltHeight;
+    enum Answer{sit, jump, stay};
+    Answer correctAnswer;
+    QString explanation;
+};
+
 namespace Ui {
 class CourseModeWindow;
 }
@@ -57,6 +68,10 @@ private:
     void enableSpinboxes();
     void resetUIElements();
     float calculatePulleyRopeLength();
+    QVector<level_t> courseStages;
+    int currentCourseStage;
+    void readStageData();
+    level_t::Answer playerChoice;
 };
 
 #endif // COURSEMODEWINDOW_H

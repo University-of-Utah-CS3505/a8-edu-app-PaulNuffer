@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>Resources/belayer.png</file>
         <file>Resources/climber.png</file>
+        <file>Resources/rockface.PNG</file>
     </qresource>
 </RCC>

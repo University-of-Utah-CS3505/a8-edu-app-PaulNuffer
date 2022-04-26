@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
+    <width>520</width>
     <height>637</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>5</y>
+      <y>0</y>
       <width>521</width>
       <height>581</height>
      </rect>
@@ -31,6 +31,53 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="titleLabel">
+       <property name="minimumSize">
+        <size>
+         <width>450</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>450</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>32</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Belaying</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::PlainText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -41,7 +88,7 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>350</height>
+         <height>240</height>
         </size>
        </property>
       </spacer>
@@ -130,20 +177,40 @@
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="backgroundImage">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>521</width>
+      <height>616</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="Resources.qrc">:/Resources/rockface.PNG</pixmap>
+    </property>
+   </widget>
+   <zorder>backgroundImage</zorder>
+   <zorder>mainWindowFrame</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>526</width>
+     <width>520</width>
      <height>25</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="Resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>quitButton</sender>
