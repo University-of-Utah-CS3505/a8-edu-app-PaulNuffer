@@ -69,54 +69,56 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
 
     level_t obj;
     //stage 1
-        obj.climberHeight=b2Vec2(5, 16);
+        obj.climberHeight=b2Vec2(5, 18);
         obj.climberWeight=72;
         obj.belayerHeight=b2Vec2(6, 0);
         obj.belayerWeight=72;
-        obj.boltHeight=b2Vec2(5.5, 13);
+        obj.boltHeight=b2Vec2(5.5, 15);
         obj.correctAnswer=level_t::jump;
-        obj.answerExplanation="Reason stage 1";
+        obj.answerExplanation="There is no risk of the climber decking, so we opt for a softer catch.";
         obj.stageDescription="Climber is 3 m above the bolt. Climber and Belayer weight the same.";
     courseStages.push_back(obj);
     //stage 2
-        obj.climberHeight=b2Vec2(5, 20);
+        obj.climberHeight=b2Vec2(5, 18);
         obj.climberWeight=72;
         obj.belayerHeight=b2Vec2(6, 0);
-        obj.belayerWeight=70;
-        obj.boltHeight=b2Vec2(5.5, 13);
-        obj.correctAnswer=level_t::stay;
-        obj.answerExplanation="Reason stage 2";
-        obj.stageDescription="Stage description 2";
+        obj.belayerWeight=100;
+        obj.boltHeight=b2Vec2(5.5, 15);
+        obj.correctAnswer=level_t::jump;
+        obj.answerExplanation="The climber is lighter than the belayer, so we jump to soften the catch.";
+        obj.stageDescription="Climber is 3 m above the bolt. Belayer is 30 kg heavier.";
     courseStages.push_back(obj);
     //stage 3
-        obj.climberHeight=b2Vec2(5, 16);
-        obj.climberWeight=200;
+        obj.climberHeight=b2Vec2(5, 18);
+        obj.climberWeight=120;
         obj.belayerHeight=b2Vec2(6, 0);
-        obj.belayerWeight=70;
-        obj.boltHeight=b2Vec2(5.5, 13);
+        obj.belayerWeight=80;
+        obj.boltHeight=b2Vec2(5.5, 15);
         obj.correctAnswer=level_t::sit;
-        obj.answerExplanation="Reason stage 3";
-        obj.stageDescription="Stage description 3";
+        obj.answerExplanation="The belayer should sit so they do not get pulled up too far/quickly";
+        obj.stageDescription="Climber is 3 m above the bolt. Climber is 40 kg heavier.";
     courseStages.push_back(obj);
     //stage 4
-        obj.climberHeight=b2Vec2(5, 35);
-        obj.climberWeight=25;
+        obj.climberHeight=b2Vec2(5, 10);
+        obj.climberWeight=70;
         obj.belayerHeight=b2Vec2(6, 0);
-        obj.belayerWeight=99;
-        obj.boltHeight=b2Vec2(5.5, 30);
-        obj.correctAnswer=level_t::jump;
-        obj.answerExplanation="Reason stage 4";
-        obj.stageDescription="Stage description 4";
+        obj.belayerWeight=70;
+        obj.boltHeight=b2Vec2(5.5, 8);
+        obj.correctAnswer=level_t::sit;
+        obj.answerExplanation="Due to high risk of decking, the belayer should sit to ensure a safe fall.";
+        obj.stageDescription="Climber is 2 m above the bolt, bolt is 8 m above the ground.";
     courseStages.push_back(obj);
     //stage 5
         obj.climberHeight=b2Vec2(5, 10);
         obj.climberWeight=72;
         obj.belayerHeight=b2Vec2(6, 0);
-        obj.belayerWeight=70;
-        obj.boltHeight=b2Vec2(5.5, 6);
-        obj.correctAnswer=level_t::jump;
-        obj.answerExplanation="Reason stage 5";
-        obj.stageDescription="Stage description 5";
+        obj.belayerWeight=100;
+        obj.boltHeight=b2Vec2(5.5, 8);
+        obj.correctAnswer=level_t::stay;
+        obj.answerExplanation="Belayer does not need to sit because they are heavier, but because /n";
+        obj.answerExplanation.append("the ground is close, the belayer should not jump so they do not collide.");
+        obj.stageDescription="Climber is 2 m above the bolt, bolt is 8 m above the ground. /n";
+        obj.stageDescription.append("Belayer is 30 kg heavier than the climber.");
     courseStages.push_back(obj);
 }
 
