@@ -32,8 +32,8 @@ signals:
 
 private slots:
     void on_exitButton_clicked();
-
     void on_nextButton_clicked();
+    void on_replayButton_clicked();
 
 private:
     Ui::IntroductionVideoWindow *ui;
@@ -41,6 +41,7 @@ private:
     QMediaPlayer* video;
     QAudioOutput* videoAudio;
     QVideoWidget* outputWidget;
+    std::vector<QString> dialog;
 
     void setupVideo();
     void setupVideoLink(QUrl);
