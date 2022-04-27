@@ -17,7 +17,7 @@ SimulationViewWidget::SimulationViewWidget(QWidget *parent)
     for (b2Body* ropeBody : sim.climberRope) {
         // Add a new label representing the rope segments body
         ropeLabel =  new QLabel(this);
-        ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
+        ropeLabel->setGeometry((ropeBody->GetPosition().x)*COORDINATE_SCALING, GROUND_LEVEL - (ropeBody->GetPosition().y)*COORDINATE_SCALING, (ropeWidth)*COORDINATE_SCALING, (ropeHeight)*COORDINATE_SCALING);
 
         // Add the body and label to the map
         climberRopeBodyToLabel.emplace(ropeBody, ropeLabel);
@@ -26,7 +26,7 @@ SimulationViewWidget::SimulationViewWidget(QWidget *parent)
     for (b2Body* ropeBody : sim.belayerRope) {
         // Add a new label representing the rope segments body
         ropeLabel =  new QLabel(this);
-        ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
+        ropeLabel->setGeometry((ropeBody->GetPosition().x)*COORDINATE_SCALING, GROUND_LEVEL - (ropeBody->GetPosition().y)*COORDINATE_SCALING, (ropeWidth)*COORDINATE_SCALING, (ropeHeight)*COORDINATE_SCALING);
 
         // Add the body and label to the map
         belayerRopeBodyToLabel.emplace(ropeBody, ropeLabel);
@@ -71,7 +71,7 @@ b2Vec2 SimulationViewWidget::getLeaderPosition(){
  */
 void SimulationViewWidget::simulationStartSlot(){
     resetSimulationDataSlot();
-    worldUpdateTimer->start(updateDelay);
+    worldUpdateTimer->start(UPDATE_DELAY);
 }
 
 /**
@@ -86,7 +86,8 @@ void SimulationViewWidget::simulationStopSlot(){
  * @param height - the new height of the belayer
  */
 void SimulationViewWidget::belayerHeightUpdatedSlot(float height){
-    sim.setBelayerHeight(height);
+    belayerHeight = height;
+    sim.setBelayerHeight(belayerHeight);
     drawWorld();
 }
 
@@ -95,7 +96,8 @@ void SimulationViewWidget::belayerHeightUpdatedSlot(float height){
  * @param height - the new height of the climber
  */
 void SimulationViewWidget::climberHeightUpdatedSlot(float height){
-    sim.setClimberHeight(height);
+    climberHeight = height;
+    sim.setClimberHeight(climberHeight);
     drawWorld();
 }
 
@@ -104,8 +106,8 @@ void SimulationViewWidget::climberHeightUpdatedSlot(float height){
  * @param weight - the new weight of the belayer
  */
 void SimulationViewWidget::belayerWeightUpdatedSlot(float weight){
-    sim.setBelayerMass(weight);
-    drawWorld();
+    belayerWeight = weight;
+    sim.setBelayerMass(belayerWeight);
 }
 
 /**
@@ -113,7 +115,8 @@ void SimulationViewWidget::belayerWeightUpdatedSlot(float weight){
  * @param weight - the new weight of the climber
  */
 void SimulationViewWidget::climberWeightUpdatedSlot(float weight){
-    sim.setClimberMass(weight);
+    climberWeight = weight;
+    sim.setClimberMass(climberWeight);
 }
 
 /**
@@ -121,7 +124,8 @@ void SimulationViewWidget::climberWeightUpdatedSlot(float weight){
  * @param height - the new height of the pulley
  */
 void SimulationViewWidget::pulleyHeightUpdatedSlot(float height){
-    sim.setPulleyHeight(height);
+    boltHeight = height;
+    sim.setPulleyHeight(boltHeight);
     drawWorld();
 }
 
@@ -130,7 +134,8 @@ void SimulationViewWidget::pulleyHeightUpdatedSlot(float height){
  * @param length - the new length of the rope
  */
 void SimulationViewWidget::pulleyRopeLengthUpdatedSlot(float length){
-    sim.setPulleyRopeLength(length);
+    ropeLength = length;
+    sim.setPulleyRopeLength(ropeLength);
     drawWorld();
 }
 
@@ -141,11 +146,11 @@ void SimulationViewWidget::pulleyRopeLengthUpdatedSlot(float length){
 void SimulationViewWidget::resetSimulationDataSlot(){
     worldUpdateTimer->stop();
     simRunning = false;
-    climberHeightUpdatedSlot(sim.pulleyRopeLength);
-    climberWeightUpdatedSlot(72);
+    climberHeightUpdatedSlot(climberHeight);
+    climberWeightUpdatedSlot(climberWeight);
     sim.setClimberX(defaultX);
-    belayerHeightUpdatedSlot(0);
-    belayerWeightUpdatedSlot(70);
+    belayerHeightUpdatedSlot(belayerHeight);
+    belayerWeightUpdatedSlot(belayerWeight);
     sim.setBelayerX(defaultX+1);
     //pulleyHeightUpdatedSlot(30);
     //pulleyRopeLengthUpdatedSlot(35);
@@ -192,22 +197,23 @@ void SimulationViewWidget::resetSimulationDataSlot(){
  */
 void SimulationViewWidget::drawWorld(){
     QPixmap map(this->width(), this->height());
-    map.fill(QColor(255,255,255));
     QPainter p(&map);
+    QImage bg(":/Resources/background.JPG");
+    p.drawImage(QRect(0, 0, this->width(), this->height()), bg);;
     b2Vec2 climberPosition(sim.getClimberPos());
-    climberPosition.x = climberPosition.x*coordinateScaling;
-    climberPosition.y = climberPosition.y*coordinateScaling;
-    p.drawImage(QPoint(climberPosition.x+xOffset, groundLevel-climberPosition.y), QImage(":/Resources/climber.png"));
+    climberPosition.x = climberPosition.x*COORDINATE_SCALING;
+    climberPosition.y = climberPosition.y*COORDINATE_SCALING;
+    p.drawImage(QPoint(climberPosition.x+X_OFFSET, GROUND_LEVEL-climberPosition.y), QImage(":/Resources/climber2.png"));
     b2Vec2 belayerPosition(sim.getBelayerPos());
-    belayerPosition.x = belayerPosition.x*coordinateScaling;
-    belayerPosition.y = belayerPosition.y*coordinateScaling;
-    p.drawImage(QPoint(belayerPosition.x+xOffset, groundLevel-belayerPosition.y), QImage(":/Resources/belayer.png"));
+    belayerPosition.x = belayerPosition.x*COORDINATE_SCALING;
+    belayerPosition.y = belayerPosition.y*COORDINATE_SCALING;
+    p.drawImage(QPoint(belayerPosition.x+X_OFFSET, GROUND_LEVEL-belayerPosition.y), QImage(":/Resources/belayer2.png"));
     //b2Vec2 anchorPosition(sim.getPulleyPos());
     b2Vec2 anchorPosition = sim.bolt->GetPosition();
     p.setPen(QPen(QColor(0,0,255), 3));
-    anchorPosition.x = anchorPosition.x*coordinateScaling;
-    anchorPosition.y = anchorPosition.y*coordinateScaling;
-    p.drawEllipse(anchorPosition.x+xOffset, groundLevel-anchorPosition.y, 25 , 25);
+    anchorPosition.x = anchorPosition.x*COORDINATE_SCALING;
+    anchorPosition.y = anchorPosition.y*COORDINATE_SCALING;
+    p.drawEllipse(anchorPosition.x+X_OFFSET-12, GROUND_LEVEL-anchorPosition.y-12, 24 , 24);
     setPixmap(map);
 
     drawRope(sim.climberRope, climberRopeBodyToLabel);
@@ -221,10 +227,10 @@ void SimulationViewWidget::drawRope(vector<b2Body*>& rope,  map<b2Body*, QLabel*
         //if(map.count(ropeBody) != 0) {
             // Add a new label representing the rope segments body
             QLabel* ropeLabel =  map.at(ropeBody);
-            ropeLabel->setGeometry((ropeBody->GetPosition().x*coordinateScaling)+xOffset, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
+            ropeLabel->setGeometry((ropeBody->GetPosition().x*COORDINATE_SCALING)+X_OFFSET, GROUND_LEVEL - (ropeBody->GetPosition().y)*COORDINATE_SCALING, (ropeWidth)*COORDINATE_SCALING, (ropeHeight)*COORDINATE_SCALING);
 
             // Create a new image for the label
-            QImage imgFill = QImage((ropeWidth)*10, groundLevel - (ropeHeight)*10, QImage::Format_ARGB32);
+            QImage imgFill = QImage((ropeWidth)*COORDINATE_SCALING, GROUND_LEVEL - (ropeHeight)*COORDINATE_SCALING, QImage::Format_ARGB32);
             imgFill.fill(QColor(200,0,175,255));
             ropeLabel->setPixmap(QPixmap::fromImage(imgFill));
         //}

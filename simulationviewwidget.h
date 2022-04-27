@@ -23,6 +23,13 @@ public:
     int maxBelayerNewtons=0;
     void updateWorld();
 
+    float climberHeight = 35;
+    float climberWeight = 72;
+    float belayerHeight = 0.1;
+    float belayerWeight = 70;
+    float boltHeight = 30;
+    float ropeLength = 35;
+
 public slots:
     void simulationStartSlot();
     void simulationStopSlot();
@@ -42,11 +49,12 @@ private slots:
 private:
     enum WindowMode{course, sandbox};
     float defaultX;
-    int updateDelay = 17;
-    int simulationDuration = 5000;
-    int groundLevel = 600;
-    int coordinateScaling = 10;
-    int xOffset = 150;
+
+    const int UPDATE_DELAY = 17;
+    const int GROUND_LEVEL = 600;
+    const int COORDINATE_SCALING = 10;
+    const int X_OFFSET = 150;
+
     WindowMode currentWindowMode;
     simulator sim;
     QTimer* worldUpdateTimer;
