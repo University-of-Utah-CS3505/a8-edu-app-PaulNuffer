@@ -4,12 +4,12 @@
 
 SimulationViewWidget::SimulationViewWidget(QWidget *parent)
     : QLabel{parent}, defaultX(5),
-      sim(simulator(defaultX,35,72,defaultX+1,0,70,5.5,30,35))
+      sim(simulator(defaultX,climberHeight,climberWeight,defaultX+1,belayerHeight,belayerWeight,defaultX+.5,boltHeight,ropeLength))
 {
     worldUpdateTimer = new QTimer(this);
     connect(worldUpdateTimer, &QTimer::timeout, this, &SimulationViewWidget::updateWorld);
 
-    ropeWidth = 0.5, ropeHeight = 0.5;
+    ropeWidth = 0.25, ropeHeight = 0.5;
     //ropeWidth = sim.ROPE_WIDTH, ropeHeight = sim.ROPE_HEIGHT;
 
     QLabel* ropeLabel;
@@ -31,6 +31,7 @@ SimulationViewWidget::SimulationViewWidget(QWidget *parent)
         // Add the body and label to the map
         belayerRopeBodyToLabel.emplace(ropeBody, ropeLabel);
     }
+
 }
 
 /**
@@ -139,6 +140,14 @@ void SimulationViewWidget::pulleyRopeLengthUpdatedSlot(float length){
     drawWorld();
 }
 
+void SimulationViewWidget::belayerForceSlot(bool direction){
+    if(direction) // true == jump, false == sit
+        sim.FORCE = 1000;
+    else
+        sim.FORCE = -1000;
+
+    sim.forceFrameCounter = 0;
+}
 /**
  * @brief Helper method for resetting the simulation to its inital values. To be called
  * whenever the simulation window is hidden.
@@ -188,8 +197,8 @@ void SimulationViewWidget::resetSimulationDataSlot(){
         sim.world.DestroyJoint(sim.pulleyJoint);
     }
     sim.hasPulley = false;
-
-    drawWorld();
+    sim.world.ClearForces();
+    //sim.resetWorld(defaultX,climberHeight,climberWeight,defaultX+1,belayerHeight,belayerWeight,defaultX+.5,boltHeight,ropeLength);
 }
 
 /**
@@ -203,11 +212,11 @@ void SimulationViewWidget::drawWorld(){
     b2Vec2 climberPosition(sim.getClimberPos());
     climberPosition.x = climberPosition.x*COORDINATE_SCALING;
     climberPosition.y = climberPosition.y*COORDINATE_SCALING;
-    p.drawImage(QPoint(climberPosition.x+X_OFFSET, GROUND_LEVEL-climberPosition.y), QImage(":/Resources/climber2.png"));
+    p.drawImage(QPoint(climberPosition.x+X_OFFSET-19, GROUND_LEVEL-climberPosition.y), QImage(":/Resources/climber2.png"));
     b2Vec2 belayerPosition(sim.getBelayerPos());
     belayerPosition.x = belayerPosition.x*COORDINATE_SCALING;
     belayerPosition.y = belayerPosition.y*COORDINATE_SCALING;
-    p.drawImage(QPoint(belayerPosition.x+X_OFFSET, GROUND_LEVEL-belayerPosition.y), QImage(":/Resources/belayer2.png"));
+    p.drawImage(QPoint(belayerPosition.x+X_OFFSET-19, GROUND_LEVEL-belayerPosition.y), QImage(":/Resources/belayer2.png"));
     //b2Vec2 anchorPosition(sim.getPulleyPos());
     b2Vec2 anchorPosition = sim.bolt->GetPosition();
     p.setPen(QPen(QColor(0,0,255), 3));

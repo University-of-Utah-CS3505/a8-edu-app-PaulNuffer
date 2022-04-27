@@ -1,5 +1,6 @@
 #include "simulator.h"
 #include <math.h>
+#include <iostream>
 
 // Weights given in kg
 // Distances given in meters
@@ -80,6 +81,8 @@ simulator::simulator(float climberX, float climberY, float climberWeight,
     climberRope = connectRopeTo(bolt, climber);
     belayerRope = connectRopeTo(bolt, belayer);
 
+    climber->GetFixtureList()->SetSensor(true);
+
     hasPulley = false;
 }
 
@@ -103,6 +106,13 @@ void simulator::updateWorld(map<b2Body*, QLabel*>* climberBodyRopeToLabel, map<b
         createPulley(bolt->GetPosition().x, bolt->GetPosition().y, pulleyRopeLength, climber, belayer);
         hasPulley = true;
     }
+    if(forceFrameCounter >= 0 && hasPulley){
+        belayer->ApplyForceToCenter(b2Vec2(0, FORCE), true);
+        forceFrameCounter++;
+        if(forceFrameCounter >= 30){
+            forceFrameCounter = -1;
+        }
+    }
 }
 
 b2Vec2 simulator::getClimberPos() {
@@ -117,11 +127,11 @@ b2Vec2 simulator::getBelayerPos() {
 // Connects A to one end, B to the other
 void simulator::createPulley(float x, float y, float length, b2Body* A, b2Body* B) {
     b2PulleyJointDef pulley = b2PulleyJointDef();
-    A->SetLinearDamping(0.5f);
-    B->SetLinearDamping(0.5f);
+    A->SetLinearDamping(3.0f);
+    B->SetLinearDamping(3.0f);
     pulley.bodyA = A;
     pulley.bodyB = B;
-    pulley.collideConnected = true;
+    pulley.collideConnected = false;
     pulley.localAnchorA.Set(0, 0);
     pulley.localAnchorB.Set(0, 0);
     pulley.lengthA = length/2;

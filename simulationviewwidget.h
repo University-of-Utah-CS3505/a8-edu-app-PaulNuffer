@@ -23,12 +23,12 @@ public:
     int maxBelayerNewtons=0;
     void updateWorld();
 
-    float climberHeight = 35;
+    float climberHeight = 16;
     float climberWeight = 72;
     float belayerHeight = 0.1;
     float belayerWeight = 70;
-    float boltHeight = 30;
-    float ropeLength = 35;
+    float boltHeight = 13;
+    float ropeLength = 16;
 
 public slots:
     void simulationStartSlot();
@@ -40,6 +40,7 @@ public slots:
     void pulleyHeightUpdatedSlot(float);
     void pulleyRopeLengthUpdatedSlot(float);
     void resetSimulationDataSlot();
+    void belayerForceSlot(bool);
 
 signals:
     void worldUpdated(int currentClimberNewtons, int maxClimberNewtons, int currentBelayerNewtons, int maxBelayerNewtons);
@@ -52,7 +53,7 @@ private:
 
     const int UPDATE_DELAY = 17;
     const int GROUND_LEVEL = 600;
-    const int COORDINATE_SCALING = 10;
+    const int COORDINATE_SCALING = 25;
     const int X_OFFSET = 150;
 
     WindowMode currentWindowMode;
