@@ -175,9 +175,12 @@ void IntroductionVideoWindow::on_nextButton_clicked()
 {
     ui->nextButton->setText("Next");
 
+    if (videoIndex == (int)introVideos.size()) {
+        videoIndex = 0;
+    }
+
     if (videoIndex == (int)introVideos.size() - 1) {
         ui->nextButton->setText("Restart Course");
-        videoIndex = 0;
     }
 
     ui->videoLabel->setText(QString("%1 ").arg(dialog.at(videoIndex)));
