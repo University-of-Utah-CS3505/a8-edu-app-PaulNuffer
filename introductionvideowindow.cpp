@@ -13,7 +13,20 @@ IntroductionVideoWindow::IntroductionVideoWindow(QWidget *parent) :
     ui->volumeIconDisplay->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
     ui->exitButton->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
 
+    ui->nextButton->setText("Start");
+    videoRunning = false;
+    videoIndex = 0;
+
     setupVideo();
+
+    introVideos.push_back((QUrl::fromLocalFile("../a8-edu-app-PaulNuffer/Resources/GivingAndTakingSlack.mp4")));
+    introVideos.push_back((QUrl::fromLocalFile("../a8-edu-app-PaulNuffer/Resources/JumpBelay.mp4")));
+    introVideos.push_back((QUrl::fromLocalFile("../a8-edu-app-PaulNuffer/Resources/OverlappedLeadFall.mp4")));
+    introVideos.push_back((QUrl::fromLocalFile("../a8-edu-app-PaulNuffer/Resources/ShortHardCatchWithBelay.mp4")));
+    introVideos.push_back((QUrl::fromLocalFile("../a8-edu-app-PaulNuffer/Resources/ShortSoftFallWithJump.mp4")));
+    introVideos.push_back((QUrl::fromLocalFile("../a8-edu-app-PaulNuffer/Resources/SideBySideCentered.mp4")));
+    introVideos.push_back((QUrl::fromLocalFile("../a8-edu-app-PaulNuffer/Resources/StayBelay.mp4")));
+
     connect(this,
             &IntroductionVideoWindow::startVideo,
             video,
@@ -39,7 +52,7 @@ IntroductionVideoWindow::IntroductionVideoWindow(QWidget *parent) :
 void IntroductionVideoWindow::openIntroVideoWindow(){
     ui->volumeSlider->setValue(50);
     show();
-    emit startVideo();
+    //emit startVideo();
 }
 
 /**
@@ -52,10 +65,12 @@ void IntroductionVideoWindow::setupVideo(){
 
     outputWidget->setGeometry(0, 0, 500, 500);
     outputWidget->resize(500, 500);
-    video->setSource((QUrl::fromLocalFile("C:/Users/Owner/Desktop/test2.mp4")));
 
     video->setAudioOutput(videoAudio);
     video->setVideoOutput(outputWidget);
+}
+void IntroductionVideoWindow::setupVideoLink(QUrl introVideo) {
+    video->setSource(introVideo);
 }
 
 IntroductionVideoWindow::~IntroductionVideoWindow()
@@ -90,3 +105,35 @@ float IntroductionVideoWindow::fromSliderToAudio(){
                                                     QAudio::LinearVolumeScale);
     return audioObjectVolume;
 }
+
+void IntroductionVideoWindow::on_nextButton_clicked()
+{
+    ui->nextButton->setText("Next");
+
+    if (videoIndex == (int)introVideos.size()) {
+        ui->nextButton->setText("Restart Intro Course");
+        videoIndex = 0;
+    }
+
+    if (!videoRunning) {
+        outputWidget->raise();
+        ui->videoFrame->lower();
+        setupVideoLink(introVideos.at(videoIndex));
+        emit startVideo();
+        videoRunning = true;
+        videoIndex++;
+    }
+    else {
+        emit stopVideo();
+        outputWidget->lower();
+        ui->videoFrame->raise();
+        ui->videoLabel->setStyleSheet("QLabel { background-color : white; }");
+        ui->videoLabel->setAlignment(Qt::AlignCenter);
+        ui->videoLabel->setText("<font color='white'>THIS IS HOW U CAATCH UR FRIEND IF U DONT WANT THEM TO DIE");
+        ui->videoLabel->raise();
+        ui->videoLabel->repaint();
+        ui->videoLabel->show();
+        videoRunning = false;
+    }
+}
+

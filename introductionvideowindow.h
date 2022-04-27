@@ -33,6 +33,8 @@ signals:
 private slots:
     void on_exitButton_clicked();
 
+    void on_nextButton_clicked();
+
 private:
     Ui::IntroductionVideoWindow *ui;
     void updateFrameSlider();
@@ -41,7 +43,13 @@ private:
     QVideoWidget* outputWidget;
 
     void setupVideo();
+    void setupVideoLink(QUrl);
     float fromSliderToAudio();
+
+    std::vector<QUrl> introVideos;
+
+    bool videoRunning;
+    int videoIndex;
 };
 
 #endif // INTRODUCTIONVIDEOWINDOW_H
