@@ -12,7 +12,8 @@ struct level_t{
     b2Vec2 boltHeight;
     enum Answer{sit, jump, stay};
     Answer correctAnswer;
-    QString explanation;
+    QString answerExplanation;
+    QString stageDescription;
 };
 
 namespace Ui {

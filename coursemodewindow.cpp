@@ -71,7 +71,8 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
         obj.belayerWeight=70;
         obj.boltHeight=b2Vec2(5.5, 30);
         obj.correctAnswer=level_t::jump;
-        obj.explanation="Reason stage 1";
+        obj.answerExplanation="Reason stage 1";
+        obj.stageDescription="Stage description 1";
     courseStages.push_back(obj);
     //stage 2
         obj.climberHeight=b2Vec2(5, 50);
@@ -80,7 +81,8 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
         obj.belayerWeight=70;
         obj.boltHeight=b2Vec2(5.5, 30);
         obj.correctAnswer=level_t::stay;
-        obj.explanation="Reason stage 2";
+        obj.answerExplanation="Reason stage 2";
+        obj.stageDescription="Stage description 2";
     courseStages.push_back(obj);
     //stage 3
         obj.climberHeight=b2Vec2(5, 35);
@@ -89,7 +91,8 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
         obj.belayerWeight=70;
         obj.boltHeight=b2Vec2(5.5, 30);
         obj.correctAnswer=level_t::sit;
-        obj.explanation="Reason stage 3";
+        obj.answerExplanation="Reason stage 3";
+        obj.stageDescription="Stage description 3";
     courseStages.push_back(obj);
     //stage 4
         obj.climberHeight=b2Vec2(5, 35);
@@ -98,7 +101,8 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
         obj.belayerWeight=99;
         obj.boltHeight=b2Vec2(5.5, 30);
         obj.correctAnswer=level_t::jump;
-        obj.explanation="Reason stage 4";
+        obj.answerExplanation="Reason stage 4";
+        obj.stageDescription="Stage description 4";
     courseStages.push_back(obj);
     //stage 5
         obj.climberHeight=b2Vec2(5, 10);
@@ -107,7 +111,8 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
         obj.belayerWeight=70;
         obj.boltHeight=b2Vec2(5.5, 6);
         obj.correctAnswer=level_t::jump;
-        obj.explanation="Reason stage 5";
+        obj.answerExplanation="Reason stage 5";
+        obj.stageDescription="Stage description 5";
     courseStages.push_back(obj);
 }
 
@@ -194,11 +199,11 @@ void CourseModeWindow::showChoiceResults(){
     QMessageBox choiceResults;
 
     if(playerChoice == courseStages.at(currentCourseStage).correctAnswer){
-        choiceResults.setText("Correct. \n" + courseStages.at(currentCourseStage).explanation);
+        choiceResults.setText("Correct. \n" + courseStages.at(currentCourseStage).answerExplanation);
         choiceResults.exec();
     }
     else {
-        choiceResults.setText("Incorrect. \n"  + courseStages.at(currentCourseStage).explanation);
+        choiceResults.setText("Incorrect. \n"  + courseStages.at(currentCourseStage).answerExplanation);
         choiceResults.exec();
     }
 
@@ -283,6 +288,10 @@ void CourseModeWindow::readStageData(){
     ui->maxBelayerNewtonsOutputLabel->setText("0");
     ui->currentBelayerNewtonsOutputLabel->setText("0");
     simView->maxBelayerNewtons=0;
+
+    QMessageBox choiceResults;
+    choiceResults.setText(courseStages.at(currentCourseStage).stageDescription);
+    choiceResults.exec();
 }
 
 void CourseModeWindow::on_jumpButton_clicked()
@@ -380,24 +389,24 @@ void CourseModeWindow::on_belayerWeightValueSpinbox_valueChanged(double arg1)
  * @brief CourseModeWindow::disableSpinboxes
  */
 void CourseModeWindow::disableSpinboxes(){
-    ui->belayerWeightValueSpinbox->setReadOnly(true);
-    ui->belayerHeightValueSpinbox->setReadOnly(true);
-    ui->leaderWeightValueSpinbox->setReadOnly(true);
-    ui->leaderHeightValueSpinbox->setReadOnly(true);
-    ui->boltHeightValueSpinbox->setReadOnly(true);
-    ui->ropeLengthValueSpinbox->setReadOnly(true);
+    ui->belayerWeightValueSpinbox->setEnabled(false);
+    ui->belayerHeightValueSpinbox->setEnabled(false);
+    ui->leaderWeightValueSpinbox->setEnabled(false);
+    ui->leaderHeightValueSpinbox->setEnabled(false);
+    ui->boltHeightValueSpinbox->setEnabled(false);
+    ui->ropeLengthValueSpinbox->setEnabled(false);
 }
 
 /**
  * @brief CourseModeWindow::enableSpinboxes
  */
 void CourseModeWindow::enableSpinboxes(){
-    ui->belayerWeightValueSpinbox->setReadOnly(false);
-    ui->belayerHeightValueSpinbox->setReadOnly(false);
-    ui->leaderWeightValueSpinbox->setReadOnly(false);
-    ui->leaderHeightValueSpinbox->setReadOnly(false);
-    ui->boltHeightValueSpinbox->setReadOnly(false);
-    ui->ropeLengthValueSpinbox->setReadOnly(false);
+    ui->belayerWeightValueSpinbox->setEnabled(true);
+    ui->belayerHeightValueSpinbox->setEnabled(true);
+    ui->leaderWeightValueSpinbox->setEnabled(true);
+    ui->leaderHeightValueSpinbox->setEnabled(true);
+    ui->boltHeightValueSpinbox->setEnabled(true);
+    ui->ropeLengthValueSpinbox->setEnabled(true);
 }
 
 /**
@@ -405,10 +414,10 @@ void CourseModeWindow::enableSpinboxes(){
  */
 void CourseModeWindow::resetUIElements(){
     emit resetSimulationDataSignal();
-    ui->belayerHeightValueSpinbox->setValue(0);
-    ui->leaderHeightValueSpinbox->setValue(35);
-    ui->leaderWeightValueSpinbox->setValue(72);
-    ui->belayerWeightValueSpinbox->setValue(70);
+    ui->belayerHeightValueSpinbox->setValue(simView->belayerHeight);
+    ui->leaderHeightValueSpinbox->setValue(simView->climberHeight);
+    ui->leaderWeightValueSpinbox->setValue(simView->climberWeight);
+    ui->belayerWeightValueSpinbox->setValue(simView->belayerWeight);
     ui->currentLeaderNewtonsOutputLabel->setText(QString::number(0));
     ui->maxLeaderNewtonsOutputLabel->setText(QString::number(0));
     ui->currentBelayerNewtonsOutputLabel->setText(QString::number(0));
@@ -416,8 +425,8 @@ void CourseModeWindow::resetUIElements(){
     // ADDED
     ui->boltHeightValueSpinbox->blockSignals(true);
     ui->ropeLengthValueSpinbox->blockSignals(true);
-    ui->boltHeightValueSpinbox->setValue(30);
-    ui->ropeLengthValueSpinbox->setValue(35);
+    ui->boltHeightValueSpinbox->setValue(simView->boltHeight);
+    ui->ropeLengthValueSpinbox->setValue(simView->ropeLength);
     ui->boltHeightValueSpinbox->blockSignals(false);
     ui->ropeLengthValueSpinbox->blockSignals(false);
     if(currSimState==running){

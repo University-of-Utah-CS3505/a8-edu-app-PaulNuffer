@@ -3,5 +3,8 @@
         <file>Resources/belayer.png</file>
         <file>Resources/climber.png</file>
         <file>Resources/rockface.PNG</file>
+        <file>Resources/background.JPG</file>
+        <file>Resources/belayer2.png</file>
+        <file>Resources/climber2.png</file>
     </qresource>
 </RCC>
