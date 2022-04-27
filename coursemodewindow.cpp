@@ -62,34 +62,38 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
             &CourseModeWindow::pulleyRopeLengthUpdatedSignal,
             simView,
             &SimulationViewWidget::pulleyRopeLengthUpdatedSlot);
+    connect(this,
+            &CourseModeWindow::belayerForceSignal,
+            simView,
+            &SimulationViewWidget::belayerForceSlot);
 
     level_t obj;
     //stage 1
-        obj.climberHeight=b2Vec2(5, 35);
+        obj.climberHeight=b2Vec2(5, 16);
         obj.climberWeight=72;
         obj.belayerHeight=b2Vec2(6, 0);
-        obj.belayerWeight=70;
-        obj.boltHeight=b2Vec2(5.5, 30);
+        obj.belayerWeight=72;
+        obj.boltHeight=b2Vec2(5.5, 13);
         obj.correctAnswer=level_t::jump;
         obj.answerExplanation="Reason stage 1";
-        obj.stageDescription="Stage description 1";
+        obj.stageDescription="Climber is 3 m above the bolt. Climber and Belayer weight the same.";
     courseStages.push_back(obj);
     //stage 2
-        obj.climberHeight=b2Vec2(5, 50);
+        obj.climberHeight=b2Vec2(5, 20);
         obj.climberWeight=72;
         obj.belayerHeight=b2Vec2(6, 0);
         obj.belayerWeight=70;
-        obj.boltHeight=b2Vec2(5.5, 30);
+        obj.boltHeight=b2Vec2(5.5, 13);
         obj.correctAnswer=level_t::stay;
         obj.answerExplanation="Reason stage 2";
         obj.stageDescription="Stage description 2";
     courseStages.push_back(obj);
     //stage 3
-        obj.climberHeight=b2Vec2(5, 35);
+        obj.climberHeight=b2Vec2(5, 16);
         obj.climberWeight=200;
         obj.belayerHeight=b2Vec2(6, 0);
         obj.belayerWeight=70;
-        obj.boltHeight=b2Vec2(5.5, 30);
+        obj.boltHeight=b2Vec2(5.5, 13);
         obj.correctAnswer=level_t::sit;
         obj.answerExplanation="Reason stage 3";
         obj.stageDescription="Stage description 3";
@@ -300,6 +304,7 @@ void CourseModeWindow::on_jumpButton_clicked()
     ui->sitButton->setEnabled(false);
     ui->stayButton->setEnabled(false);
     emit simulationStartSignal();
+    emit belayerForceSignal(true);
     playerChoice = level_t::Answer::jump;
     QTimer::singleShot(5000, Qt::PreciseTimer, this, &CourseModeWindow::showChoiceResults);
 }
@@ -311,6 +316,7 @@ void CourseModeWindow::on_sitButton_clicked()
     ui->sitButton->setEnabled(false);
     ui->stayButton->setEnabled(false);
     emit simulationStartSignal();
+    emit belayerForceSignal(false);
     playerChoice = level_t::Answer::sit;
     QTimer::singleShot(5000, Qt::PreciseTimer, this, &CourseModeWindow::showChoiceResults);
 }

@@ -44,6 +44,7 @@ signals:
     void pulleyHeightUpdatedSignal(float);
     void pulleyRopeLengthUpdatedSignal(float);
     void resetSimulationDataSignal();
+    void belayerForceSignal(bool);
 
 private slots:
     void on_mainMenuButton_clicked();

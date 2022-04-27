@@ -48,9 +48,11 @@ public:
     const float ROPE_WIDTH = 0.05;
     const float ROPE_HEIGHT = 0.05;
 
+    float FORCE = 1000;
     float pulleyX;
     float pulleyY;
     float pulleyRopeLength;
+    int forceFrameCounter = -1;
     bool hasPulley;
 
     vector<b2Body*> connectRopeTo(b2Body* A, b2Body* B);
