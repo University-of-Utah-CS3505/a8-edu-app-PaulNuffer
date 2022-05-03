@@ -168,6 +168,7 @@ void SimulationViewWidget::resetSimulationDataSlot(){
     sim.world.ClearForces();
     sim.climber->SetLinearDamping(0.0f);
     sim.belayer->SetLinearDamping(0.0f);
+
 }
 
 /**

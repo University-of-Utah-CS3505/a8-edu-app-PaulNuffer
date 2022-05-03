@@ -79,7 +79,7 @@ simulator::simulator(float climberX, float climberY, float climberWeight,
     climberRope = connectRopeTo(bolt, climber);
     belayerRope = connectRopeTo(bolt, belayer);
 
-    climber->GetFixtureList()->SetSensor(true);
+    //climber->GetFixtureList()->SetSensor(true);
 
     hasPulley = false;
 }

@@ -348,7 +348,9 @@ void CourseModeWindow::on_runSimulationButton_clicked()
     case running:
         enableSpinboxes();
         emit simulationStopSignal();
+        emit resetUIElements();
         ui->runSimulationButton->setText("Run");
+        emit resetSimulationDataSignal();
         currSimState = stopped;
         break;
     }
