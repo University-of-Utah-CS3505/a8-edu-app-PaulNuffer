@@ -1,4 +1,3 @@
-#include <QMessageBox>
 #include "coursemodewindow.h"
 #include "ui_coursemodewindow.h"
 
@@ -115,9 +114,9 @@ CourseModeWindow::CourseModeWindow(QWidget *parent) :
         obj.belayerWeight=100;
         obj.boltHeight=b2Vec2(5.5, 8);
         obj.correctAnswer=level_t::stay;
-        obj.answerExplanation="Belayer does not need to sit because they are heavier, but because /n";
+        obj.answerExplanation="Belayer does not need to sit because they are heavier, but because \n";
         obj.answerExplanation.append("the ground is close, the belayer should not jump so they do not collide.");
-        obj.stageDescription="Climber is 2 m above the bolt, bolt is 8 m above the ground. /n";
+        obj.stageDescription="Climber is 2 m above the bolt, bolt is 8 m above the ground. \n";
         obj.stageDescription.append("Belayer is 30 kg heavier than the climber.");
     courseStages.push_back(obj);
 }
@@ -223,7 +222,7 @@ void CourseModeWindow::showChoiceResults(){
     }
     else{
         QMessageBox endScreen;
-        endScreen.setText("You win. Woot");
+        endScreen.setText("You have finished the course mode. \n Thank you for playing!");
         endScreen.exec();
         hide();
         emit closeCourseModeWindowSignal();

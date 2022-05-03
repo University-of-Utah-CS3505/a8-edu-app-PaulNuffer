@@ -1,6 +1,4 @@
 #include "simulator.h"
-#include <math.h>
-#include <iostream>
 
 // Weights given in kg
 // Distances given in meters

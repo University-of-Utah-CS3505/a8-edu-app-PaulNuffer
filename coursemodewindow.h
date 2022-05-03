@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "simulationviewwidget.h"
+#include <QMessageBox>
 
 struct level_t{
     b2Vec2 climberHeight;

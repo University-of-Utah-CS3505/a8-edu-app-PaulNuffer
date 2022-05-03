@@ -5,6 +5,7 @@
 #include <vector>
 #include <QLabel>
 #include <map>
+#include <math.h>
 
 using std::map;
 using std::vector;

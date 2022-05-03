@@ -1,5 +1,4 @@
 #include "simulationviewwidget.h"
-#include <QPaintEvent>
 
 
 SimulationViewWidget::SimulationViewWidget(QWidget *parent)
@@ -161,44 +160,14 @@ void SimulationViewWidget::resetSimulationDataSlot(){
     belayerHeightUpdatedSlot(belayerHeight);
     belayerWeightUpdatedSlot(belayerWeight);
     sim.setBelayerX(defaultX+1);
-    //pulleyHeightUpdatedSlot(30);
-    //pulleyRopeLengthUpdatedSlot(35);
-
-//    for (auto map : climberRopeBodyToLabel) {
-//        map.second->~QLabel();
-//    }
-
-//    for (auto map : belayerRopeBodyToLabel) {
-//        map.second->~QLabel();
-//    }
-
-//    climberRopeBodyToLabel.clear();
-//    belayerRopeBodyToLabel.clear();
-//    QLabel* ropeLabel;
-//    for (b2Body* ropeBody : sim.climberRope) {
-//        // Add a new label representing the rope segments body
-//        ropeLabel =  new QLabel(this);
-//        ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
-
-//        // Add the body and label to the map
-//        climberRopeBodyToLabel.emplace(ropeBody, ropeLabel);
-//    }
-
-//    for (b2Body* ropeBody : sim.belayerRope) {
-//        // Add a new label representing the rope segments body
-//        ropeLabel =  new QLabel(this);
-//        ropeLabel->setGeometry((ropeBody->GetPosition().x)*coordinateScaling, groundLevel - (ropeBody->GetPosition().y)*coordinateScaling, (ropeWidth)*coordinateScaling, (ropeHeight)*coordinateScaling);
-
-//        // Add the body and label to the map
-//        belayerRopeBodyToLabel.emplace(ropeBody, ropeLabel);
-//    }
 
     if (sim.hasPulley) {
         sim.world.DestroyJoint(sim.pulleyJoint);
     }
     sim.hasPulley = false;
     sim.world.ClearForces();
-    //sim.resetWorld(defaultX,climberHeight,climberWeight,defaultX+1,belayerHeight,belayerWeight,defaultX+.5,boltHeight,ropeLength);
+    sim.climber->SetLinearDamping(0.0f);
+    sim.belayer->SetLinearDamping(0.0f);
 }
 
 /**

@@ -266,6 +266,9 @@
       <height>29</height>
      </rect>
     </property>
+    <property name="maximum">
+     <double>24.000000000000000</double>
+    </property>
    </widget>
    <widget class="QDoubleSpinBox" name="leaderWeightValueSpinbox">
     <property name="geometry">
@@ -289,6 +292,9 @@
       <height>29</height>
      </rect>
     </property>
+    <property name="maximum">
+     <double>1000.000000000000000</double>
+    </property>
    </widget>
    <widget class="QDoubleSpinBox" name="belayerHeightValueSpinbox">
     <property name="geometry">
@@ -298,6 +304,9 @@
       <width>67</width>
       <height>29</height>
      </rect>
+    </property>
+    <property name="maximum">
+     <double>24.000000000000000</double>
     </property>
    </widget>
    <widget class="QLabel" name="climberMassUnitsLabel">
@@ -475,6 +484,9 @@
       <height>29</height>
      </rect>
     </property>
+    <property name="maximum">
+     <double>24.000000000000000</double>
+    </property>
    </widget>
    <widget class="QLabel" name="ropeLengthTextLabel">
     <property name="geometry">
@@ -510,6 +522,9 @@
       <width>67</width>
       <height>29</height>
      </rect>
+    </property>
+    <property name="maximum">
+     <double>24.000000000000000</double>
     </property>
    </widget>
    <zorder>runSimulationButton</zorder>

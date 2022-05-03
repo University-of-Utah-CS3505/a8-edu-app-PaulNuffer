@@ -9,6 +9,7 @@
 #include "simulator.h"
 #include <map>
 #include <QPixmap>
+#include <QPaintEvent>
 
 using std::map;
 

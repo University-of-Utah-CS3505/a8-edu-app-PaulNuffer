@@ -1,0 +1,8 @@
+05/02/22
+
+-CLEANED UP INCLUDES, LOCALIZED ALL INCLUDES TO .H FILES
+-CLEANED UP DEPRECATED COMMENTS
+-BUG FIX FOR CLIMBER FALL PHYSICS:
+	*Added a linear damping reset everytime the world gets reset to ensure climber takes a normal freefall until the rope catches
+-CLEANED UP DIALOG BOX STRINGS
+-UPDATED SPINBOX MAX VALUES IN COURSEMODEWINDOW.UI
