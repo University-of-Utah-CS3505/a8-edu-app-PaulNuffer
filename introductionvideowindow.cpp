@@ -191,6 +191,13 @@ void IntroductionVideoWindow::on_nextButton_clicked()
     emit startVideo();
     videoRunning = true;
     videoIndex++;
+
+    ui->nextButton->setEnabled(false);
+    QTimer::singleShot(3000, this, &IntroductionVideoWindow::resetNextButtonSlot);
+}
+
+void IntroductionVideoWindow::resetNextButtonSlot() {
+    ui->nextButton->setEnabled(true);
 }
 
 void IntroductionVideoWindow::on_replayButton_clicked()

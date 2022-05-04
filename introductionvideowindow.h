@@ -7,6 +7,7 @@
 #include <QtMultimedia>
 #include <QMediaPlayer>
 #include <QVideoWidget>
+#include <QTimer>
 
 namespace Ui {
 class IntroductionVideoWindow;
@@ -34,6 +35,7 @@ private slots:
     void on_exitButton_clicked();
     void on_nextButton_clicked();
     void on_replayButton_clicked();
+    void resetNextButtonSlot();
 
 private:
     Ui::IntroductionVideoWindow *ui;
